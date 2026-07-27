@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>dr02_pro</name>
+  <version>1.0.0</version>
+  <description>DR02 Pro ROS2 SDK with state machine and topic examples</description>
+  <maintainer email="ysc@deeprobotics.cn">ysc</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>deep_robotics_common</depend>
+  <depend>rclcpp</depend>
+  <depend>drdds</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <exec_depend>ament_cmake</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

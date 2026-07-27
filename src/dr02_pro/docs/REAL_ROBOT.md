@@ -1,0 +1,213 @@
+# DR02 Pro Real-Robot Deployment and Control
+
+[Back to the DR02 Pro SDK Guide](../README.md)
+
+This document describes the SDK environment, runtime locations, and Developer Modes used to control a DR02 Pro robot. The SDK can run on a development host, the AOS host (`10.21.33.103`), or the NOS host (`10.21.33.106`). The AOS and NOS hosts are robot-side computers. Any of these devices may directly control the robot when ROS/DDS network communication is available.
+
+## Workflow
+
+1. Select the SDK runtime location, then complete network setup, environment preparation, code deployment, and compilation.
+2. Confirm the Developer Mode required by the target program and use the gamepad to enter that mode.
+3. Start the program on the selected runtime device.
+4. For a normal shutdown, stop the program before exiting Developer Mode. If an abnormal condition occurs, use the red stop button on the gamepad.
+
+## Environment and Network Preparation
+
+The SDK depends on ROS 2 and the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg) message interface package. The ROS 2 package name provided by `deep-robotics-msg` is `drdds`.
+
+The message interface package supports deb installation and source builds. See the `deep-robotics-msg` documentation for detailed instructions. With a deb installation, loading the ROS 2 environment is sufficient. With a source build, the message interface workspace `install/setup.bash` must also be loaded. The commands below show only the ROS 2 environment setup.
+
+| Runtime Location | IP Address | Environment Status | Preparation |
+| --- | --- | --- | --- |
+| Development host | Depends on the user's network configuration | Ubuntu 22.04 or Ubuntu 24.04 is recommended | Install the corresponding ROS 2 distribution and install or build the `deep-robotics-msg` message interface package from source |
+| AOS host | `10.21.33.103` | The message interface package must be installed | Install the `deep-robotics-msg` message interface package and load the ROS 2 and message interface environments |
+| NOS host | `10.21.33.106` | The message interface package is preinstalled | No separate message interface package installation is required |
+
+To connect to the AOS host or NOS host, use either the robot WiFi network or an Ethernet cable connected to the network port on the rear of the robot. After network connectivity is established, log in to the target device through SSH.
+
+The robot WiFi password and SSH login password are different. Refer to the delivery materials or information provided by technical support for the WiFi SSID, WiFi password, and SSH password.
+
+## Deployment and Build
+
+### Development Host
+
+When the SDK runs on a development host to control the real robot, the host must connect to the network port on the rear of the robot through Ethernet.
+
+1. Configure the host Ethernet interface IP address and gateway on the `10.21.33.*` subnet. Use an available address such as `10.21.33.100`.
+2. Verify that the host can reach the robot device:
+
+   ```bash
+   ping 10.21.33.103
+   ```
+
+3. Load the ROS 2 and message interface environments, then verify that robot Topics can be discovered:
+
+   ```bash
+   source /opt/ros/<ros-distro>/setup.bash
+   ros2 topic list
+   ```
+
+4. Build the SDK on the development host:
+
+   ```bash
+   colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=x86
+   ```
+
+> [!IMPORTANT]
+>
+> A successful `ping` confirms only IP network connectivity. Before running the SDK, also confirm that `ros2 topic list` can discover robot Topics.
+
+### AOS Host (10.21.33.103)
+
+Access the AOS host through the robot WiFi network or the network port on the rear of the robot. From the directory containing `deep-robotics-sdk2`, run the following command to transfer the source code to the AOS host:
+
+```bash
+scp -r deep-robotics-sdk2 user@10.21.33.103:~/
+```
+
+The `deep-robotics-msg` message interface package must be installed on the AOS host. The installed ROS 2 package name is `drdds`. After logging in, load the ROS 2 and message interface environments and build the SDK:
+
+```bash
+ssh user@10.21.33.103
+source /opt/ros/<ros-distro>/setup.bash
+cd ~/deep-robotics-sdk2
+colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
+```
+
+### NOS Host (10.21.33.106)
+
+Access the NOS host through the robot WiFi network or the network port on the rear of the robot. From the directory containing `deep-robotics-sdk2`, run the following command to transfer the source code to the NOS host:
+
+```bash
+scp -r deep-robotics-sdk2 user@10.21.33.106:~/
+```
+
+The message interface package is preinstalled on the NOS host; `deep-robotics-msg` does not need to be installed or built separately. After logging in, load the existing ROS 2 environment and build the SDK:
+
+```bash
+ssh user@10.21.33.106
+source /opt/ros/<ros-distro>/setup.bash
+cd ~/deep-robotics-sdk2
+colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
+```
+
+### Deployment and Build Notes
+
+> [!NOTE]
+>
+> - `--packages-up-to dr02_pro` builds `dr02_pro` and its dependencies in the current workspace.
+> - After the dependencies have been built, use `--packages-select dr02_pro` for routine incremental development.
+
+> [!WARNING]
+>
+> Do not enable `BUILD_SIM=ON` when building or controlling the real robot.
+
+<a id="developer-mode"></a>
+
+## Developer Modes
+
+### Mode Overview
+
+Developer Mode grants the SDK access to the robot's motion-control capabilities. It provides three modes: High-Level Motion Control Mode, Whole-Body Joint Control Mode, and Upper-Body Joint Control Mode. Before running the SDK, confirm the Developer Mode required by the target program, then use the gamepad to select and enter the corresponding mode.
+
+| Developer Mode | Control Scope |
+| --- | --- |
+| High-Level Motion Control Mode | The SDK controls motion through high-level commands such as `/MOTION_STATE`, `/GAIT`, and `/STEER`; the robot's internal control policy controls the joints |
+| Whole-Body Joint Control Mode | The SDK directly controls all joints through `/JOINTS_CMD` |
+| Upper-Body Joint Control Mode | The SDK controls the waist and both arms through `/JOINTS_CMD`; the robot's internal policy controls the leg joints |
+
+See the [State Machine](STATE_MACHINE.md) document for the Developer Mode required by the state machine. See [Topic Examples](EXAMPLES.md) for the Developer Mode required by each example.
+
+### General Requirements
+
+On the gamepad, open Settings - Auxiliary Functions - Developer Mode Settings, enable Developer Mode, and select the corresponding control mode. The selection is retained, so it does not need to be configured again unless the mode changes. Selecting a mode here does not mean that the robot has entered that mode; Developer Mode must still be entered from the gamepad main screen before each real-robot control session.
+
+> [!IMPORTANT]
+>
+> - Before entering Developer Mode, confirm that the robot is in the idle state.
+> - After entering Developer Mode, perception, localization, and obstacle-avoidance functions are disabled. Do not rely on these functions to ensure motion safety.
+> - The three Developer Modes cannot be switched directly. Before selecting another mode, stop the SDK program, fully exit the current mode, and then select the target mode on the settings screen.
+
+### High-Level Motion Control Mode
+
+#### Control Scope
+
+The SDK controls robot motion through high-level commands, while the robot's internal control policy controls the joints. This mode is intended for the high-level motion-state, gait, and velocity-control examples.
+
+#### Configure and Enter
+
+1. Select High-Level Motion Control Mode on the gamepad Developer Mode settings screen.
+2. Confirm that the robot is in the idle state.
+3. Return to the gamepad main screen and use the entry in the upper-left corner to switch to Developer Mode.
+4. After the mode transition completes, select High-Level Control Mode and wait for it to be enabled.
+
+#### Run a Program
+
+After entering High-Level Motion Control Mode, use the common run command described above to start a [high-level example](EXAMPLES.md#high-level-examples). Entering this mode does not directly change the robot's motion state; use high-level control commands for subsequent motion-state transitions.
+
+#### Normal Exit
+
+1. Exit the program in the terminal running the SDK and confirm that the program and its related control Topic publishers have stopped.
+2. Switch the robot back to the idle state.
+3. Select Exit Development on the gamepad main screen.
+4. After confirming that the robot is in the idle state, use the entry in the upper-left corner of the main screen to exit Developer Mode.
+
+### Whole-Body Joint Control Mode
+
+#### Control Scope
+
+The SDK directly controls all joints through `/JOINTS_CMD`. This mode is intended for the state machine and whole-body joint-control examples.
+
+#### Configure and Enter
+
+1. Select Whole-Body Joint Control Mode on the gamepad Developer Mode settings screen.
+2. Confirm that the robot is in the idle state.
+3. Return to the gamepad main screen and use the entry in the upper-left corner to switch to Developer Mode.
+4. After the mode transition completes, select Whole-Body Control Mode and wait for it to be enabled.
+
+#### Run a Program
+
+After entering Whole-Body Joint Control Mode, use the common run command described above to start the [state machine](STATE_MACHINE.md) or a low-level example marked Whole-Body Joint Control Mode in [Topic Examples](EXAMPLES.md).
+
+#### Normal Exit
+
+1. Exit the program in the terminal running the SDK and confirm that the program and its related control Topic publishers have stopped.
+2. Select Exit Development on the gamepad main screen.
+3. After switching the robot back to the idle state, use the entry in the upper-left corner of the main screen to exit Developer Mode.
+
+### Upper-Body Joint Control Mode
+
+#### Control Scope
+
+The SDK controls the waist and both arms through `/JOINTS_CMD`, while the robot's internal policy controls the leg joints. This mode is intended for waist and arm joint-control examples.
+
+#### Configure and Enter
+
+1. Select Upper-Body Joint Control Mode on the gamepad settings screen.
+2. Confirm that the robot is in the idle state.
+3. Return to the gamepad main screen and use the entry in the upper-left corner to switch to Developer Mode.
+4. Use the gamepad interface to bring the robot to the suspended-standing position.
+5. Select Start Motion.
+6. Select Upper-Body Control Mode and wait for the mode transition to complete.
+
+#### Run a Program
+
+After entering Upper-Body Joint Control Mode, use the common run command described above to start a low-level example marked Upper-Body Joint Control Mode in [Topic Examples](EXAMPLES.md).
+
+#### Normal Exit
+
+1. Exit the program in the terminal running the SDK and confirm that the program and its related control Topic publishers have stopped.
+2. Select Exit Development on the gamepad main screen.
+3. After switching the robot back to the idle state, use the entry in the upper-left corner of the main screen to exit Developer Mode.
+
+### Emergency Stop
+
+If an abnormal condition occurs or control must be stopped immediately, press the red stop button on the gamepad first. After the robot returns to a stable state, confirm that the SDK program and its control Topic publishers have stopped, then exit Developer Mode.
+
+## Safety Requirements
+
+> [!WARNING]
+>
+> - Before controlling the real robot, confirm that it has entered the Developer Mode required by the target program.
+> - When running a motion-control program on the real robot for the first time, test it with a reliable safety suspension in place.
+> - Only one `/JOINTS_CMD` publisher may run at a time.

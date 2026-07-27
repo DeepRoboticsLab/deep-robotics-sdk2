@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>deep_robotics_common</name>
+  <version>1.0.0</version>
+  <description>Common header-only utilities for DEEPRobotics SDK packages</description>
+  <maintainer email="ysc@deeprobotics.cn">ysc</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
