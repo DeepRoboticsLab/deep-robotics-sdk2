@@ -1,8 +1,8 @@
 /**
- * @file common_policy_runner.hpp
- * @brief ONNX policy runner for RL control.
+ * @file amp_policy_runner.hpp
+ * @brief AMP (Adversarial Motion Prior) ONNX policy runner for RL control.
  * @author DEEPRobotics
- * @date 2026-06-27
+ * @date 2026-07-24
  *
  * @copyright Copyright (c) 2026 DEEPRobotics
  *
@@ -19,23 +19,24 @@
 
 namespace deep_robotics::dr02_pro {
 
-class CommonPolicyRunner : public PolicyRunnerBase {
+class AmpPolicyRunner : public PolicyRunnerBase {
 private:
     // Control parameters
     VecXf kp_, kd_;
     VecXf dof_pos_default_;
     Vec3f max_cmd_vel_;
-    float action_scale_;
-    float omega_scale_;
-    float dof_vel_scale_;
+    VecXf action_scale_;
+    float lin_vel_scale_, ang_vel_scale_, dof_vel_scale_;
     Vec3f cmd_vel_scale_;
+    float zero_cmd_threshold_xy_, zero_cmd_threshold_z_;
 
     // Observation/action buffers
     int obs_dim_, obs_history_num_, act_dim_;
-    int obs_total_dim_;
-    VecXf current_observation_, observation_history_, observation_total_;
+    int policy_input_dim_;
+    VecXf current_observation_, observation_history_;
     VecXf action_, last_action_;
     VecXf obs_joint_pos_, obs_joint_vel_;
+    VecXf action_min_, action_max_;
 
     // Joint order mappings
     std::vector<int> robot_to_policy_idx_;
@@ -49,39 +50,27 @@ private:
     Ort::Env env_;
     std::vector<Ort::Value> ort_inputs_;
 
-    const char* input_names_[1] = {"state"};
-    const char* output_names_[1] = {"output"};
+    const char* input_names_[1] = {"observation"};
+    const char* output_names_[1] = {"action"};
 
 public:
-    CommonPolicyRunner(const std::string& policy_name, RobotName robot_name) : PolicyRunnerBase(policy_name, robot_name) {
+    AmpPolicyRunner(const std::string& policy_name, RobotName robot_name)
+        : PolicyRunnerBase(policy_name, robot_name) {
         kp_ = VecXf::Zero(21);
-        kp_ << 300.0, 300.0,
-               200.0,
-               300.0, 300.0,
-               100.0, 100.0,
-               300.0, 300.0,
-               100.0, 100.0,
-               300.0, 300.0,
-               100.0, 100.0,
-               80.0, 80.0,
-               100.0, 100.0,
-               30.0, 30.0;
+        kp_ << 250.0, 250.0, 180.0, 250.0, 100.0, 40.0,
+               250.0, 250.0, 180.0, 250.0, 100.0, 40.0,
+               150.0,
+               100.0, 100.0, 100.0, 100.0,
+               100.0, 100.0, 100.0, 100.0;
         kd_ = VecXf::Zero(21);
-        kd_ << 10, 10,
-               10,
-               10, 10,
-               5, 5,
-               10, 10,
-               5, 5,
-               10, 10,
-               5, 5,
-               3, 3,
-               5, 5,
-               1, 1;
+        kd_ << 6., 6., 4., 6., 2.5, 1.0,
+               6., 6., 4., 6., 2.5, 1.0,
+               3.0,
+               2.5, 2.5, 2.5, 2.5,
+               2.5, 2.5, 2.5, 2.5;
 
-        std::vector<std::string> robot_order;
-        //DR2PRO
-        robot_order = {
+        // Joint order definitions (DR2PRO == CR1PRO layout, 29 robot DOF)
+        std::vector<std::string> robot_order = {
             "waist_z_joint", "waist_x_joint", "waist_y_joint",
             "left_shoulder_y_joint", "left_shoulder_x_joint", "left_shoulder_z_joint",
             "left_elbow_joint", "left_wrist_z_joint", "left_wrist_y_joint", "left_wrist_x_joint",
@@ -92,19 +81,17 @@ public:
             "right_hip_y_joint", "right_hip_x_joint", "right_hip_z_joint",
             "right_knee_joint", "right_ankle_y_joint", "right_ankle_x_joint"
         };
-        
+
         std::vector<std::string> policy_order = {
-            "left_hip_y_joint", "right_hip_y_joint",
+            "left_hip_y_joint", "left_hip_x_joint", "left_hip_z_joint",
+            "left_knee_joint", "left_ankle_y_joint", "left_ankle_x_joint",
+            "right_hip_y_joint", "right_hip_x_joint", "right_hip_z_joint",
+            "right_knee_joint", "right_ankle_y_joint", "right_ankle_x_joint",
             "waist_z_joint",
-            "left_hip_x_joint", "right_hip_x_joint",
-            "left_shoulder_y_joint", "right_shoulder_y_joint",
-            "left_hip_z_joint", "right_hip_z_joint",
-            "left_shoulder_x_joint", "right_shoulder_x_joint",
-            "left_knee_joint", "right_knee_joint",
-            "left_shoulder_z_joint", "right_shoulder_z_joint",
-            "left_ankle_y_joint", "right_ankle_y_joint",
-            "left_elbow_joint", "right_elbow_joint",
-            "left_ankle_x_joint", "right_ankle_x_joint"
+            "left_shoulder_y_joint", "left_shoulder_x_joint", "left_shoulder_z_joint",
+            "left_elbow_joint",
+            "right_shoulder_y_joint", "right_shoulder_x_joint", "right_shoulder_z_joint",
+            "right_elbow_joint",
         };
 
         std::vector<std::string> output_order = {
@@ -131,25 +118,44 @@ public:
         policy_to_arm_idx_ = GeneratePermutation(policy_order, arm_joints_order);
 
         decimation_ = 10;
-        action_scale_ = 0.25;
-        omega_scale_ = 0.25;
-        dof_vel_scale_ = 0.05;
-        cmd_vel_scale_ = Vec3f(2., 2., 0.25);
-        obs_dim_ = 72;
-        obs_history_num_ = 5;
+        lin_vel_scale_ = 2.0;
+        ang_vel_scale_ = 0.2;
+        dof_vel_scale_ = 0.1;
+        cmd_vel_scale_ << lin_vel_scale_, lin_vel_scale_, ang_vel_scale_;
+        zero_cmd_threshold_xy_ = 0.15;
+        zero_cmd_threshold_z_ = 0.15;
+
+        obs_dim_ = 73;
+        obs_history_num_ = 10;
         act_dim_ = 21;
-        obs_total_dim_ = obs_dim_ + obs_dim_ * obs_history_num_;
+        policy_input_dim_ = obs_history_num_ * obs_dim_;
 
         dof_pos_default_.setZero(act_dim_);
-        dof_pos_default_ << -0.4, -0.4, 0, 0, 0, 0, 0, 0., 0., 0, 0, 0.8, 0.8, 0, 0, -0.4, -0.4, 0.5, 0.5, 0, 0;
+        dof_pos_default_ << -0.1, 0., 0., 0.2, -0.1, 0.,
+                           -0.1, 0., 0., 0.2, -0.1, 0.,
+                           0.,
+                           0.,  0.15, 0., 1.35,
+                           0., -0.15, 0., 1.35;
+
+        action_scale_.setZero(act_dim_);
+        action_scale_ << 0.25, 0.25, 0.25, 0.25, 0.5, 0.25,
+                         0.25, 0.25, 0.25, 0.25, 0.5, 0.25,
+                         0.25,
+                         0.25, 0.25, 0.25, 0.25,
+                         0.25, 0.25, 0.25, 0.25;
+
+        action_min_ = VecXf::Constant(act_dim_, -10.0);
+        action_max_ = VecXf::Constant(act_dim_, 10.0);
 
         max_cmd_vel_.setZero(3);
+
         session_options_.SetIntraOpNumThreads(1);
         session_options_.SetGraphOptimizationLevel(ORT_ENABLE_ALL);
         ort_inputs_.reserve(1);
 
         env_ = Ort::Env(ORT_LOGGING_LEVEL_ERROR, policy_name_.data());
-        memory_info_ = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
+        memory_info_ = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator,
+                                                   OrtMemType::OrtMemTypeDefault);
 
         try {
             namespace fs = std::filesystem;
@@ -161,16 +167,17 @@ public:
         }
     }
 
-    ~CommonPolicyRunner() override {
-        std::cout << "CommonPolicyRunner " << policy_name_ << " destroyed" << std::endl;
+    ~AmpPolicyRunner() override {
+        std::cout << "AmpPolicyRunner " << policy_name_ << " destroyed" << std::endl;
     }
 
     /**
-     * @brief Display common policy information.
+     * @brief Display AMP policy information.
      */
     void DisplayPolicyInfo() override {
         std::cout << policy_name_ << " network test success" << std::endl;
-        std::cout << "dim  : " << obs_dim_ << " " << obs_history_num_ << " " << obs_total_dim_ << " " << act_dim_ << std::endl;
+        std::cout << "dim  : " << obs_dim_ << " " << obs_history_num_ << " "
+                  << policy_input_dim_ << " " << act_dim_ << std::endl;
         std::cout << "dof  : " << dof_pos_default_.transpose() << std::endl;
         std::cout << "kp   : " << kp_.transpose() << std::endl;
         std::cout << "kd   : " << kd_.transpose() << std::endl;
@@ -188,10 +195,10 @@ public:
 
         current_observation_.setZero(obs_dim_);
         observation_history_.setZero(obs_dim_ * obs_history_num_);
-        observation_total_.setZero(obs_total_dim_);
 
-        run_cnt_ = 0;
         cmd_vel_input_.setZero();
+        run_cnt_ = 0;
+        std::cout << "[amp policy runner] on enter" << std::endl;
     }
 
     /**
@@ -201,15 +208,19 @@ public:
     }
 
     /**
-     * @brief Run common policy inference for a robot state and user command.
+     * @brief Run AMP policy inference for a robot state and user command.
      * @param ro Current robot basic state.
      * @param uc Current user command.
      * @return Robot action produced by the policy.
      */
     RobotAction GetRobotAction(const RobotBasicState &ro, const UserCommand &uc) override {
-        Vec3f user_cmd_vel = Vec3f(uc.forward_vel_scale, uc.side_vel_scale, uc.turning_vel_scale);
+        Vec3f user_cmd_vel = Vec3f(uc.forward_vel_scale,
+                                   uc.side_vel_scale,
+                                   uc.turning_vel_scale);
+        if (uc.forward_vel_scale < 0) user_cmd_vel[0] = 0.6f * uc.forward_vel_scale;
+
         Eigen::Vector3f vel_delta = user_cmd_vel - cmd_vel_input_;
-        vel_delta_const_ << 0.02, 0.02, 0.04;
+        vel_delta_const_ << 0.02, 0.02, 0.08;
         for (int i = 0; i < 3; ++i) {
             if (fabs(vel_delta(i)) > vel_delta_const_(i)) {
                 vel_delta(i) = Sign(vel_delta(i)) * vel_delta_const_(i);
@@ -218,38 +229,52 @@ public:
         cmd_vel_input_ += vel_delta;
         Vec3f cmd_vel = cmd_vel_input_.cwiseProduct(max_cmd_vel_);
 
-        current_observation_.setZero(obs_dim_);
         Vec3f project_gravity = ro.base_rot_mat.transpose() * Vec3f(0., 0., -1);
+        float cmd_flag = 0.0f;
+        if (fabs(cmd_vel[2]) > zero_cmd_threshold_z_ ||
+            cmd_vel.head(2).norm() > zero_cmd_threshold_xy_) {
+            cmd_flag = 1.0f;
+        }
+
+        current_observation_.setZero(obs_dim_);
 
         for (int i = 0; i < act_dim_; i++) {
             obs_joint_pos_(i) = ro.joint_pos(robot_to_policy_idx_[i]);
             obs_joint_vel_(i) = ro.joint_vel(robot_to_policy_idx_[i]);
         }
-        current_observation_ << omega_scale_ * ro.base_omega,
+
+        current_observation_ << ro.base_omega * ang_vel_scale_,
                                 project_gravity,
                                 cmd_vel.cwiseProduct(cmd_vel_scale_),
-                                obs_joint_pos_ - dof_pos_default_,
-                                dof_vel_scale_ * obs_joint_vel_,
+                                cmd_flag,
+                                (obs_joint_pos_ - dof_pos_default_).cwiseQuotient(action_scale_),
+                                obs_joint_vel_ * dof_vel_scale_,
                                 last_action_;
 
-        VecXf obs_history_record = observation_history_.segment(obs_dim_, (obs_history_num_ - 1) * obs_dim_).eval();
+        // Shift history and append current observation at the tail
+        VecXf obs_history_record =
+            observation_history_.segment(obs_dim_, (obs_history_num_ - 1) * obs_dim_).eval();
         observation_history_.segment(0, (obs_history_num_ - 1) * obs_dim_) = obs_history_record;
-        observation_history_.segment((obs_history_num_ - 1) * obs_dim_, obs_dim_) = current_observation_;
+        observation_history_.segment((obs_history_num_ - 1) * obs_dim_, obs_dim_) =
+            current_observation_;
 
-        observation_total_.segment(0, obs_dim_) = current_observation_;
-        observation_total_.segment(obs_dim_, obs_dim_ * obs_history_num_) = observation_history_;
-
-        const std::vector<int64_t> state_shape = {1, obs_total_dim_};
+        const std::vector<int64_t> state_shape = {1, policy_input_dim_};
         auto state_tensor = Ort::Value::CreateTensor<float>(
-            memory_info_, observation_total_.data(), observation_total_.size(), state_shape.data(), state_shape.size());
+            memory_info_, observation_history_.data(), observation_history_.size(),
+            state_shape.data(), state_shape.size());
         ort_inputs_.clear();
         ort_inputs_.push_back(std::move(state_tensor));
 
         auto output_tensors = session_.Run(
-            Ort::RunOptions{nullptr}, input_names_, ort_inputs_.data(), ort_inputs_.size(), output_names_, 1);
-        action_ = Eigen::Map<VecXf>(output_tensors[0].GetTensorMutableData<float>(), act_dim_);
+            Ort::RunOptions{nullptr}, input_names_, ort_inputs_.data(), ort_inputs_.size(),
+            output_names_, 1);
 
+        float *policy_output = output_tensors[0].GetTensorMutableData<float>();
+        Eigen::Map<VecXf> action_output(policy_output, act_dim_);
+        action_ = action_output.cwiseMax(action_min_).cwiseMin(action_max_);
         last_action_ = action_;
+        VecXf action_norm = action_.cwiseProduct(action_scale_);
+
         RobotAction ra;
         ra.goal_joint_pos.setZero(act_dim_);
         ra.goal_joint_vel.setZero(act_dim_);
@@ -258,18 +283,19 @@ public:
         ra.kd.setZero(act_dim_);
         for (int i = 0; i < act_dim_; i++) {
             const int idx = policy_to_output_idx_[i];
-            ra.goal_joint_pos(i) = action_scale_ * action_(idx) + dof_pos_default_(idx);
+            ra.goal_joint_pos(i) = action_norm(idx) + dof_pos_default_(idx);
             ra.kp(i) = kp_(idx);
             ra.kd(i) = kd_(idx);
         }
 
-        if (run_cnt_ < 50) {
+        // Smooth arm transition during the first 100 steps
+        if (run_cnt_ < 100) {
             VecXf init_goal_pos_delta(8);
             for (int i = 0; i < 8; ++i) {
                 const int arm_idx = policy_to_arm_idx_[i];
                 init_goal_pos_delta(i) = dof_pos_default_(arm_idx) - obs_joint_pos_(arm_idx);
-                if (fabs(init_goal_pos_delta(i)) > 0.08) {
-                    init_goal_pos_delta(i) = Sign(init_goal_pos_delta(i)) * 0.08;
+                if (fabs(init_goal_pos_delta(i)) > 0.01) {
+                    init_goal_pos_delta(i) = Sign(init_goal_pos_delta(i)) * 0.01f;
                 }
                 ra.goal_joint_pos(1 + i) = init_goal_pos_delta(i) + obs_joint_pos_(arm_idx);
             }
@@ -282,13 +308,21 @@ public:
      * @brief Set maximum command velocity.
      * @param vel Maximum command velocity vector.
      */
-    void SetCmdMaxVel(const Vec3f& vel) {
+    void SetCmdMaxVel(const Vec3f &vel) {
         for (int i = 0; i < 3; ++i) {
             if (vel(i) < 0) {
                 std::cerr << policy_name_ << " max_vel " << i << " set error" << std::endl;
             }
         }
         max_cmd_vel_ = vel;
+    }
+
+    /**
+     * @brief Get maximum command velocity.
+     * @return Maximum command velocity vector.
+     */
+    Vec3f GetCmdMaxVel() {
+        return max_cmd_vel_;
     }
 
     /**
@@ -299,17 +333,16 @@ public:
      * @return Index permutation.
      */
     static std::vector<int> GeneratePermutation(
-        const std::vector<std::string>& from,
-        const std::vector<std::string>& to,
-        int default_index = 0)
-    {
+        const std::vector<std::string> &from,
+        const std::vector<std::string> &to,
+        int default_index = 0) {
         std::unordered_map<std::string, int> idx_map;
         for (int i = 0; i < static_cast<int>(from.size()); ++i) {
             idx_map[from[i]] = i;
         }
 
         std::vector<int> perm;
-        for (const auto& name : to) {
+        for (const auto &name : to) {
             auto it = idx_map.find(name);
             if (it != idx_map.end()) {
                 perm.push_back(it->second);
@@ -317,7 +350,6 @@ public:
                 perm.push_back(default_index);
             }
         }
-
         return perm;
     }
 };

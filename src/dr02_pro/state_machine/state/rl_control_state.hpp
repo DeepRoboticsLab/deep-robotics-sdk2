@@ -15,7 +15,7 @@
 #include <mutex>
 #include <thread>
 
-#include "common_policy_runner.hpp"
+#include "amp_policy_runner.hpp"
 #include "state_base.h"
 
 namespace deep_robotics::dr02_pro {
@@ -26,7 +26,7 @@ private:
     std::atomic<int> state_run_cnt_{0};
 
     std::shared_ptr<PolicyRunnerBase> policy_ptr_;
-    std::shared_ptr<CommonPolicyRunner> common_policy_;
+    std::shared_ptr<AmpPolicyRunner> amp_policy_;
 
     UserCommand user_command;
     std::mutex user_command_policy_mutex_;
@@ -129,12 +129,11 @@ private:
 public:
     RLControlState(const RobotName& robot_name, const std::string& state_name, std::shared_ptr<ControllerData> data_ptr)
         : StateBase(robot_name, state_name, data_ptr) {
-        common_policy_ = std::make_shared<CommonPolicyRunner>("common", robot_name);
-        common_policy_->SetCmdMaxVel(Vec3f(1.8, 0.5, 2.5));
-        common_policy_->DisplayPolicyInfo();
-
+        amp_policy_ = std::make_shared<AmpPolicyRunner>("amp", robot_name);
+        amp_policy_->SetCmdMaxVel(Vec3f(1.0, 0.5, 1.2));
+        amp_policy_->DisplayPolicyInfo();
         std::lock_guard<std::mutex> lock(user_command_policy_mutex_);
-        policy_ptr_ = common_policy_;
+        policy_ptr_ = amp_policy_;
         if (!policy_ptr_) {
             std::cerr << "error policy" << std::endl;
             exit(0);
