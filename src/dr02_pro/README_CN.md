@@ -9,7 +9,8 @@
 - DR02 Pro RL 状态机控制
 - 低层关节状态、关节命令和上肢控制示例
 - 高层运动状态、步态和速度控制示例
-- 电池、IMU 和手柄按键外设 Topic 示例
+- 电池状态和当前故障快照监测示例
+- IMU 和手柄按键外设 Topic 示例
 - RealSense 深度相机部署和使用说明
 - WAV 文件播放、音量控制和录音示例
 
@@ -18,7 +19,8 @@
 - `state_machine/`：DR02 Pro 主状态机程序
 - `low_level/`：低层关节和上肢控制 Topic 示例
 - `high_level/`：高层运动状态、步态和速度控制示例
-- `peripherals/`：电池、IMU 和手柄按键示例
+- `monitoring/`：电池状态和当前故障快照监测示例
+- `peripherals/`：IMU 和手柄按键外设示例
 - `audio/`：WAV 播放、音量和录音示例
 - `docs/`：实机控制、仿真运行、状态机、示例和相机说明
 
@@ -29,6 +31,7 @@
 | `BUILD_DR02_PRO_STATE_MACHINE` | `ON` | 编译状态机 |
 | `BUILD_DR02_PRO_LOW_LEVEL` | `ON` | 编译低层关节和上肢控制示例 |
 | `BUILD_DR02_PRO_HIGH_LEVEL` | `ON` | 编译高层运动、步态和速度示例 |
+| `BUILD_DR02_PRO_MONITORING` | `ON` | 编译状态监测示例 |
 | `BUILD_DR02_PRO_PERIPHERALS` | `ON` | 编译外设示例 |
 | `BUILD_DR02_PRO_AUDIO` | `ON` | 编译音频示例 |
 | `BUILD_SIM` | `OFF` | 启用仿真支持；实机控制不应开启 |

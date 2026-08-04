@@ -68,11 +68,32 @@ Supported gait values:
 | `0x21001` | `HumanWALKAMP` | Humanoid walking. |
 | `0x21006` | `HumanWALKTERRAIN` | Complex-terrain walking. |
 
-## Peripheral Examples
+## Monitoring Examples
 
 | Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
 | `battery_state_example` | `/BATTERY_DATA` | Any | Not supported | `ros2 run dr02_pro battery_state_example` | Prints battery level, voltage, current, and protection state. |
+| `fault_snapshot_example` | `/fault_aggregator` | Any | Not supported | `ros2 run dr02_pro fault_snapshot_example` | Subscribes to `drdds/msg/FaultEventArray` and prints the current-fault snapshot. |
+
+### Current Fault Snapshot
+
+`/fault_aggregator` uses fault-state-change triggers and periodic reporting. It immediately publishes the current active-fault snapshot when a fault is detected, also publishes when other fault states change, and continues publishing snapshots periodically. Repeated snapshots with the same content do not mean that the faults occurred again; an empty `active_faults` array means that no faults are currently active.
+
+The example displays only the information needed to identify and assess a fault:
+
+| Output | Description |
+| --- | --- |
+| Time | Local time when the fault occurred or was last updated; omitted when invalid. |
+| Severity | Highest severity reported for the fault. |
+| Fault code | Product-defined fault identifier; applications should use this value for matching. |
+| Fault name | Human-readable fault description. |
+
+Severity increases from `DEBUG(0)`, `INFO(1)`, `NOTICE(2)`, `WARN(3)`, `ERROR(4)`, `CRITICAL(5)`, and `ALERT(6)` to `EMERG(7)`. Product-specific protection and recovery behavior depends on the fault. The example skips unchanged periodic snapshots to avoid duplicate output; other message fields are reserved for internal diagnostics and are not displayed.
+
+## Peripheral Examples
+
+| Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
+| --- | --- | --- | --- | --- | --- |
 | `imu_example` | `/IMU_DATA_HEAD`, `/IMU_DATA_BASE` | Any | Not supported | `ros2 run dr02_pro imu_example` | Subscribes to `sensor_msgs/msg/Imu` and prints head and base IMU quaternions, angular velocity, and linear acceleration. |
 | `gamepad_key_example` | `/GAMEPAD_KEY` | Any | Not supported | `ros2 run dr02_pro gamepad_key_example` | Prints gamepad key events. |
 

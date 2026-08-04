@@ -27,6 +27,7 @@ endif()
 
 option(BUILD_DR02_PRO_LOW_LEVEL "Build DR02 Pro low-level examples" ON)
 option(BUILD_DR02_PRO_HIGH_LEVEL "Build DR02 Pro high-level examples" ON)
+option(BUILD_DR02_PRO_MONITORING "Build DR02 Pro monitoring examples" ON)
 option(BUILD_DR02_PRO_PERIPHERALS "Build DR02 Pro peripheral examples" ON)
 option(BUILD_DR02_PRO_AUDIO "Build DR02 Pro audio examples" ON)
 option(BUILD_DR02_PRO_STATE_MACHINE "Build DR02 Pro state machine" ON)
@@ -48,6 +49,10 @@ endif()
 
 if(BUILD_DR02_PRO_HIGH_LEVEL)
   add_subdirectory(high_level)
+endif()
+
+if(BUILD_DR02_PRO_MONITORING)
+  add_subdirectory(monitoring)
 endif()
 
 if(BUILD_DR02_PRO_PERIPHERALS)

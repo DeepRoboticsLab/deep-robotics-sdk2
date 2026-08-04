@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0] - 2026-08-04
+
+### Added
+
+- Added the `/fault_aggregator` example for monitoring the current active-fault snapshot.
+- Added the monitoring example group and `BUILD_DR02_PRO_MONITORING` build option for battery and fault monitoring.
+
+### Changed
+
+- Moved the battery-state example into the monitoring group; its executable name and run command are unchanged.
+
 ## [1.0.0] - 2026-07-15
 
 ### Added

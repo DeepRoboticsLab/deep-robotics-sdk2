@@ -9,7 +9,8 @@ This ROS 2 package provides the DR02 Pro motion-control state machine and standa
 - DR02 Pro RL state-machine control
 - Low-level joint state, joint command, and upper-body control examples
 - High-level motion state, gait, and velocity control examples
-- Peripheral Topic examples for battery, IMU, and gamepad keys
+- Monitoring examples for battery state and current-fault snapshots
+- Peripheral Topic examples for IMU and gamepad keys
 - RealSense depth-camera deployment and usage documentation
 - Audio examples for WAV playback, volume control, and recording
 
@@ -18,7 +19,8 @@ This ROS 2 package provides the DR02 Pro motion-control state machine and standa
 - `state_machine/`: main DR02 Pro state-machine program
 - `low_level/`: low-level joint and upper-body control Topic examples
 - `high_level/`: high-level motion state, gait, and velocity control examples
-- `peripherals/`: battery, IMU, and gamepad key examples
+- `monitoring/`: battery-state and current-fault snapshot monitoring examples
+- `peripherals/`: IMU and gamepad key peripheral examples
 - `audio/`: WAV playback, volume control, and recording examples
 - `docs/`: real-robot control, simulation, state-machine, example, and camera documentation
 
@@ -29,6 +31,7 @@ This ROS 2 package provides the DR02 Pro motion-control state machine and standa
 | `BUILD_DR02_PRO_STATE_MACHINE` | `ON` | Build the state machine |
 | `BUILD_DR02_PRO_LOW_LEVEL` | `ON` | Build low-level joint and upper-body control examples |
 | `BUILD_DR02_PRO_HIGH_LEVEL` | `ON` | Build high-level motion, gait, and velocity examples |
+| `BUILD_DR02_PRO_MONITORING` | `ON` | Build monitoring examples |
 | `BUILD_DR02_PRO_PERIPHERALS` | `ON` | Build peripheral examples |
 | `BUILD_DR02_PRO_AUDIO` | `ON` | Build audio examples |
 | `BUILD_SIM` | `OFF` | Enable simulation support; do not enable for real-robot control |

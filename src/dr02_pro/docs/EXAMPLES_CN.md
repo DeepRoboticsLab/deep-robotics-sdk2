@@ -68,11 +68,32 @@ ros2 run dr02_pro <example_name> [args]
 | `0x21001` | `HumanWALKAMP` | 仿人走路。 |
 | `0x21006` | `HumanWALKTERRAIN` | 复杂地形走路。 |
 
-## 外设示例
+## 状态监测示例
 
 | 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
 | `battery_state_example` | `/BATTERY_DATA` | 任意 | 不支持 | `ros2 run dr02_pro battery_state_example` | 打印电量、电压、电流和保护状态。 |
+| `fault_snapshot_example` | `/fault_aggregator` | 任意 | 不支持 | `ros2 run dr02_pro fault_snapshot_example` | 订阅 `drdds/msg/FaultEventArray` 并打印当前故障快照。 |
+
+### 当前故障快照
+
+`/fault_aggregator` 采用状态变化触发和周期两种上报方式：故障出现时立即发布一次当前活动故障快照，故障状态发生其他变化时也会触发发布，同时按周期持续发布。重复收到相同内容不表示故障重复发生；`active_faults` 为空表示当前没有活动故障。
+
+示例仅显示便于用户判断故障的关键信息：
+
+| 输出 | 含义 |
+| --- | --- |
+| 时间 | 故障发生或最近一次更新的本地时间；时间无效时不显示。 |
+| 严重级别 | 一类故障中最高的严重级别。 |
+| 故障码 | 产品定义的故障标识，程序判断应使用该值。 |
+| 故障名称 | 便于用户阅读的故障说明。 |
+
+严重级别从低到高依次为 `DEBUG(0)`、`INFO(1)`、`NOTICE(2)`、`WARN(3)`、`ERROR(4)`、`CRITICAL(5)`、`ALERT(6)` 和 `EMERG(7)`，具体保护和处置方式由产品定义。示例会跳过内容未变化的周期快照，避免重复输出；消息中的其他字段用于内部故障诊断，不在示例中展示。
+
+## 外设示例
+
+| 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
+| --- | --- | --- | --- | --- | --- |
 | `imu_example` | `/IMU_DATA_HEAD`, `/IMU_DATA_BASE` | 任意 | 不支持 | `ros2 run dr02_pro imu_example` | 订阅 `sensor_msgs/msg/Imu`，打印头部和基座 IMU 的四元数、角速度和线加速度。 |
 | `gamepad_key_example` | `/GAMEPAD_KEY` | 任意 | 不支持 | `ros2 run dr02_pro gamepad_key_example` | 打印手柄按键事件。 |
 
