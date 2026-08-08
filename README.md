@@ -9,6 +9,7 @@ DEEPRobotics SDK provides ROS 2 packages and Topic examples for supported DEEPRo
 | Product | ROS 2 Package | Product Documentation |
 | --- | --- | --- |
 | DR02 Pro | `dr02_pro` | [English](src/dr02_pro/README.md) / [中文](src/dr02_pro/README_CN.md) |
+| DR02 Std | `dr02_std` | [English](src/dr02_std/README.md) / [中文](src/dr02_std/README_CN.md) |
 
 ## Repository Layout
 

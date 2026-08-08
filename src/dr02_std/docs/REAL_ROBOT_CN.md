@@ -1,8 +1,8 @@
-# DR02 Pro 实机部署与控制
+# DR02 Std 实机部署与控制
 
-[返回 DR02 Pro SDK 使用指南](../README_CN.md)
+[返回 DR02 Std SDK 使用指南](../README_CN.md)
 
-本文档说明控制 DR02 Pro 实机时的 SDK 环境、运行位置和开发者模式。SDK 可以在开发主机、AOS 主机（`10.21.33.103`）或 NOS 主机（`10.21.33.106`）上运行；AOS 主机和 NOS 主机均为机器人端计算设备。只要 ROS/DDS 网络互通，这些设备均可能直接控制实机。
+本文档说明控制 DR02 Std 实机时的 SDK 环境、运行位置和开发者模式。SDK 可以在开发主机或 AOS 主机（`10.21.33.103`）上运行；AOS 主机是机器人端计算设备。只要 ROS/DDS 网络互通，这些设备均可能直接控制实机。
 
 ## 使用流程
 
@@ -21,9 +21,8 @@ SDK 依赖 ROS 2、[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-r
 | --- | --- | --- | --- |
 | 开发主机 | 根据用户网络配置 | 建议使用 Ubuntu 22.04 或 Ubuntu 24.04 | 安装对应版本的 ROS 2，并安装或源码编译 `deep-robotics-msg` 消息接口库 |
 | AOS 主机 | `10.21.33.103` | 需安装消息接口库 | 安装 `deep-robotics-msg` 消息接口库，并加载 ROS 2 和消息接口库环境 |
-| NOS 主机 | `10.21.33.106` | 消息接口库已预装 | 无需单独安装消息接口库 |
 
-连接 AOS 主机或 NOS 主机时，可以使用机器人 WiFi，也可以将网线插入机器人背部网口。网络连通后，通过 SSH 登录对应设备。
+连接 AOS 主机时，可以使用机器人 WiFi，也可以将网线插入机器人背部网口。网络连通后，通过 SSH 登录 AOS 主机。
 
 机器人 WiFi 密码与 SSH 登录密码不同。WiFi 名称、WiFi 密码和 SSH 密码均以交付资料或技术支持提供的信息为准。
 
@@ -50,7 +49,7 @@ SDK 直接在开发主机上运行并控制实机时，开发主机必须通过�
 4. 在开发主机上编译 SDK：
 
    ```bash
-   colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=x86
+   colcon build --packages-up-to dr02_std --cmake-args -DBUILD_PLATFORM=x86
    ```
 
 > [!IMPORTANT]
@@ -71,32 +70,15 @@ AOS 主机需要安装 `deep-robotics-msg` 消息接口库。安装后提供的 
 ssh user@10.21.33.103
 source /opt/ros/<ros-distro>/setup.bash
 cd ~/deep-robotics-sdk2
-colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
-```
-
-### 在 NOS 主机（10.21.33.106）部署与编译
-
-通过机器人 WiFi 或连接机器人背部网口访问 NOS 主机。在包含 `deep-robotics-sdk2` 目录的路径下执行以下命令将代码传输至 NOS 主机：
-
-```bash
-scp -r deep-robotics-sdk2 user@10.21.33.106:~/
-```
-
-NOS 主机已预装消息接口库，无需单独安装或源码编译 `deep-robotics-msg`。登录后，加载设备现有的 ROS 2 环境并编译 SDK：
-
-```bash
-ssh user@10.21.33.106
-source /opt/ros/<ros-distro>/setup.bash
-cd ~/deep-robotics-sdk2
-colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
+colcon build --packages-up-to dr02_std --cmake-args -DBUILD_PLATFORM=arm
 ```
 
 ### 部署与编译说明
 
 > [!NOTE]
 >
-> - `--packages-up-to dr02_pro` 会编译 `dr02_pro` 及当前工作空间内的依赖包。
-> - 相关依赖已经完成编译后，日常增量开发可使用 `--packages-select dr02_pro`。
+> - `--packages-up-to dr02_std` 会编译 `dr02_std` 及当前工作空间内的依赖包。
+> - 相关依赖已经完成编译后，日常增量开发可使用 `--packages-select dr02_std`。
 
 > [!WARNING]
 >

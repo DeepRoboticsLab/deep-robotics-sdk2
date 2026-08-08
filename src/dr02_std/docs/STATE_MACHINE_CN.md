@@ -1,8 +1,8 @@
-# DR02 Pro 状态机
+# DR02 Std 状态机
 
-[返回 DR02 Pro SDK 使用指南](../README_CN.md)
+[返回 DR02 Std SDK 使用指南](../README_CN.md)
 
-DR02 Pro 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，并在 RL 控制状态下接收 `/STEER` 和 `/REAL_STEER`。
+DR02 Std 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，并在 RL 控制状态下接收 `/STEER` 和 `/REAL_STEER`。
 
 ## 运行方式
 
@@ -28,7 +28,7 @@ DR02 Pro 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，并在 RL 控�
 
 ```bash
 source install/setup.bash
-ros2 run dr02_pro state_machine
+ros2 run dr02_std state_machine
 ```
 
 ## 状态流转

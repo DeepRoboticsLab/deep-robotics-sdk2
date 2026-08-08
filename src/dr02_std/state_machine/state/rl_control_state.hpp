@@ -18,7 +18,7 @@
 #include "amp_policy_runner.hpp"
 #include "state_base.h"
 
-namespace deep_robotics::dr02_pro {
+namespace deep_robotics::dr02_std {
 class RLControlState : public StateBase {
 private:
     RobotBasicState rbs_;
@@ -78,12 +78,6 @@ private:
      */
     void PolicyRunner() {
         int run_cnt_record = -1;
-        MatXf joint_cmd(cp_ptr_->dof_num_, 5);
-        MatXf leg_joint_cmd(2 * cp_ptr_->leg_dof_num_, 5);
-        MatXf arm_joint_cmd(2 * cp_ptr_->arm_dof_num_, 5);
-        MatXf waist_joint_cmd(cp_ptr_->waist_dof_num_, 5);
-        MatXf neck_joint_cmd(cp_ptr_->neck_dof_num_, 5);
-
         UserCommand user_command_tmp;
         while (start_flag_.load(std::memory_order_acquire)) {
             {
@@ -102,24 +96,7 @@ private:
                 auto ra = policy_ptr_->GetRobotAction(robot_state_snapshot, user_command_tmp);
                 MatXf res = ra.ConvertToMat();
 
-                waist_joint_cmd.setZero();
-                arm_joint_cmd.setZero();
-                neck_joint_cmd.setZero();
-                leg_joint_cmd.setZero();
-
-                arm_joint_cmd.col(0) = cp_ptr_->arm_kp_.replicate(2, 1);
-                arm_joint_cmd.col(2) = cp_ptr_->arm_kd_.replicate(2, 1);
-                waist_joint_cmd.col(0) = cp_ptr_->waist_kp_;
-                waist_joint_cmd.col(2) = cp_ptr_->waist_kd_;
-
-                // Only replace joints covered by the policy output; keep PD lock for the rest
-                waist_joint_cmd.block<1, 5>(0, 0) = res.block<1, 5>(0, 0);
-                arm_joint_cmd.block<4, 5>(0, 0) = res.block<4, 5>(1, 0);
-                arm_joint_cmd.block<4, 5>(7, 0) = res.block<4, 5>(5, 0);
-                leg_joint_cmd = res.block<12, 5>(9, 0);
-                joint_cmd << waist_joint_cmd, arm_joint_cmd, leg_joint_cmd, neck_joint_cmd;
-
-                ri_ptr_->SetJointCommand(joint_cmd);
+                ri_ptr_->SetJointCommand(res);
                 run_cnt_record = current_run_cnt;
             }
             std::this_thread::sleep_for(std::chrono::microseconds(100));
@@ -209,4 +186,4 @@ public:
         return StateName::kRLControl;
     }
 };
-}  // namespace deep_robotics::dr02_pro
+}  // namespace deep_robotics::dr02_std

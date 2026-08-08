@@ -1,8 +1,8 @@
-# DR02 Pro Real-Robot Deployment and Control
+# DR02 Std Real-Robot Deployment and Control
 
-[Back to the DR02 Pro SDK Guide](../README.md)
+[Back to the DR02 Std SDK Guide](../README.md)
 
-This document describes the SDK environment, runtime locations, and Developer Modes used to control a DR02 Pro robot. The SDK can run on a development host, the AOS host (`10.21.33.103`), or the NOS host (`10.21.33.106`). The AOS and NOS hosts are robot-side computers. Any of these devices may directly control the robot when ROS/DDS network communication is available.
+This document describes the SDK environment, runtime locations, and Developer Modes used to control a DR02 Std robot. The SDK can run on a development host or the AOS host (`10.21.33.103`). The AOS host is the robot-side computer. Either device may directly control the robot when ROS/DDS network communication is available.
 
 ## Workflow
 
@@ -21,9 +21,8 @@ The message interface package supports deb installation and source builds. See t
 | --- | --- | --- | --- |
 | Development host | Depends on the user's network configuration | Ubuntu 22.04 or Ubuntu 24.04 is recommended | Install the corresponding ROS 2 distribution and install or build the `deep-robotics-msg` message interface package from source |
 | AOS host | `10.21.33.103` | The message interface package must be installed | Install the `deep-robotics-msg` message interface package and load the ROS 2 and message interface environments |
-| NOS host | `10.21.33.106` | The message interface package is preinstalled | No separate message interface package installation is required |
 
-To connect to the AOS host or NOS host, use either the robot WiFi network or an Ethernet cable connected to the network port on the rear of the robot. After network connectivity is established, log in to the target device through SSH.
+To connect to the AOS host, use either the robot WiFi network or an Ethernet cable connected to the network port on the rear of the robot. After network connectivity is established, log in to the AOS host through SSH.
 
 The robot WiFi password and SSH login password are different. Refer to the delivery materials or information provided by technical support for the WiFi SSID, WiFi password, and SSH password.
 
@@ -50,7 +49,7 @@ When the SDK runs on a development host to control the real robot, the host must
 4. Build the SDK on the development host:
 
    ```bash
-   colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=x86
+   colcon build --packages-up-to dr02_std --cmake-args -DBUILD_PLATFORM=x86
    ```
 
 > [!IMPORTANT]
@@ -71,32 +70,15 @@ The `deep-robotics-msg` message interface package must be installed on the AOS h
 ssh user@10.21.33.103
 source /opt/ros/<ros-distro>/setup.bash
 cd ~/deep-robotics-sdk2
-colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
-```
-
-### NOS Host (10.21.33.106)
-
-Access the NOS host through the robot WiFi network or the network port on the rear of the robot. From the directory containing `deep-robotics-sdk2`, run the following command to transfer the source code to the NOS host:
-
-```bash
-scp -r deep-robotics-sdk2 user@10.21.33.106:~/
-```
-
-The message interface package is preinstalled on the NOS host; `deep-robotics-msg` does not need to be installed or built separately. After logging in, load the existing ROS 2 environment and build the SDK:
-
-```bash
-ssh user@10.21.33.106
-source /opt/ros/<ros-distro>/setup.bash
-cd ~/deep-robotics-sdk2
-colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
+colcon build --packages-up-to dr02_std --cmake-args -DBUILD_PLATFORM=arm
 ```
 
 ### Deployment and Build Notes
 
 > [!NOTE]
 >
-> - `--packages-up-to dr02_pro` builds `dr02_pro` and its dependencies in the current workspace.
-> - After the dependencies have been built, use `--packages-select dr02_pro` for routine incremental development.
+> - `--packages-up-to dr02_std` builds `dr02_std` and its dependencies in the current workspace.
+> - After the dependencies have been built, use `--packages-select dr02_std` for routine incremental development.
 
 > [!WARNING]
 >

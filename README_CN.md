@@ -9,6 +9,7 @@ DEEPRobotics SDK 提供面向已支持 DEEPRobotics 产品的 ROS 2 软件包和
 | 产品 | ROS 2 软件包 | 产品文档 |
 | --- | --- | --- |
 | DR02 Pro | `dr02_pro` | [English](src/dr02_pro/README.md) / [中文](src/dr02_pro/README_CN.md) |
+| DR02 Std | `dr02_std` | [English](src/dr02_std/README.md) / [中文](src/dr02_std/README_CN.md) |
 
 ## 仓库结构
 

@@ -1,8 +1,8 @@
-# DR02 Pro State Machine
+# DR02 Std State Machine
 
-[Back to the DR02 Pro SDK Guide](../README.md)
+[Back to the DR02 Std SDK Guide](../README.md)
 
-The DR02 Pro state machine subscribes to `/JOINTS_DATA`, publishes `/JOINTS_CMD`, and receives `/STEER` and `/REAL_STEER` while in the RL control state.
+The DR02 Std state machine subscribes to `/JOINTS_DATA`, publishes `/JOINTS_CMD`, and receives `/STEER` and `/REAL_STEER` while in the RL control state.
 
 ## Operation
 
@@ -28,7 +28,7 @@ The state machine supports operation with the MuJoCo simulation. See [Simulation
 
 ```bash
 source install/setup.bash
-ros2 run dr02_pro state_machine
+ros2 run dr02_std state_machine
 ```
 
 ## State Transitions
