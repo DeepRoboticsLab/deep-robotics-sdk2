@@ -8,6 +8,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/state
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${DEEP_ROBOTICS_THIRD_PARTY}/eigen
+  ${DEEP_ROBOTICS_THIRD_PARTY}/nlohmann
   ${DEEP_ROBOTICS_THIRD_PARTY}/onnxruntime/${BUILD_PLATFORM}/include
 )
 

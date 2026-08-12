@@ -45,16 +45,18 @@ Idle -> ZeroPos -> RLControl
 ## 键盘控制
 
 - `z`：进入 `ZeroPos`
-- `c`：从 `ZeroPos` 进入 `RLControl`
+- `c`：从 `ZeroPos` 进入 `RLControlAMP`；在 `RLControlMimic` 下切换到 AMP
+- `v`：从 `ZeroPos` 进入 `RLControlMimic`；在 `RLControlAMP` 下切换到 Mimic
 - `r`：进入 `JointDamping`
-- `w/s`：RL 控制下前进 / 后退
-- `a/d`：RL 控制下左移 / 右移
-- `q/e`：RL 控制下左转 / 右转
+- `w/s`：AMP 控制下前进 / 后退
+- `a/d`：AMP 控制下左移 / 右移
+- `q/e`：AMP 控制下左转 / 右转
 
 ## 手柄控制
 
 - L1：进入 `ZeroPos`
-- L2：从 `ZeroPos` 进入 `RLControl`
+- L2：从 `ZeroPos` 进入 `RLControlAMP`
+- R1：从 `ZeroPos` 进入 `RLControlMimic`
 - R2：进入 `JointDamping`
 - 左摇杆：前进 / 左移 / 后退 / 右移命令
 - 右摇杆：转向命令

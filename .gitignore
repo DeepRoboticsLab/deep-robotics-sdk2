@@ -4,3 +4,6 @@ install/
 log/
 .idea/
 __pycache__/
+
+.qoder
+.vscode

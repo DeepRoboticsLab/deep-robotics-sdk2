@@ -74,13 +74,14 @@ class UserCommandInterface {
               << "╚════════════════════════════════════════════════╝\n"
               << "  Movement:  Left joystick\n"
               << "  Rotation:  Right joystick\n"
-              << "  Mode:      L1 (zeropos)  L2 (rl control)  R2 (damping) \n"
+              << "  Mode:      L1 (zeropos)  L2 (AMP)  R1 (Mimic)  R2 (damping) \n"
               << "╔════════════════════════════════════════════════╗\n"
               << "║                KEYBOARD TELEOP                 ║\n"
               << "╚════════════════════════════════════════════════╝\n"
               << "  Movement:  W/S (forward/back)  A/D (left/right)\n"
               << "  Rotation:  Q (CCW)  E (CW)\n"
-              << "  Mode:      Z (zeropos)  C (rl control)  R (damping) \n"
+              << "  Mode:      Z (zeropos)  C (to AMP)  V (to Mimic)  R (damping)\n"
+              << "  Movement:  W/S/A/D/Q/E (in AMPControl states)\n"
               << "\n";
 
     start_thread_flag_ = true;
@@ -165,10 +166,17 @@ class UserCommandInterface {
         break;
       case KeyCode::L2:
         if (current_state == RobotMotionState::ZeroPos) {
-          usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControl);
+          usr_cmd_->target_policy = uint8_t(PolicyMode::kAMP);
+          usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControlAMP);
+          std::cout << "[MODE] AMP\n";
         }
         break;
       case KeyCode::R1:
+        if (current_state == RobotMotionState::ZeroPos) {
+          usr_cmd_->target_policy = uint8_t(PolicyMode::kMimic);
+          usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControlMimic);
+          std::cout << "[MODE] Mimic\n";
+        }
         break;
       case KeyCode::R2:
         usr_cmd_->target_mode = uint8_t(RobotMotionState::JointDamping);
@@ -239,10 +247,24 @@ class UserCommandInterface {
             break;
           case RobotMotionState::ZeroPos:
             if (key == 'c') {
-              usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControl);
+              usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControlAMP);
+            } else if (key == 'v') {
+              usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControlMimic);
             }
             break;
-          case RobotMotionState::RLControl:
+          case RobotMotionState::RLControlMimic:
+            // 'c' switches directly to AMP, keyboard movement not supported
+            if (key == 'c') {
+              usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControlAMP);
+              std::cout << "[MODE] Mimic -> AMP (direct)\n";
+            }
+            break;
+          case RobotMotionState::RLControlAMP:
+            // 'v' switches directly to Mimic, 'c' is no-op (already in AMP)
+            if (key == 'v') {
+              usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControlMimic);
+              std::cout << "[MODE] AMP -> Mimic (direct)\n";
+            }
             if (key == 'w') {
               usr_cmd_->forward_vel_scale = AXIS_STEP;
               forward_last_input_ms = current_time_ms;
@@ -252,7 +274,6 @@ class UserCommandInterface {
               forward_last_input_ms = current_time_ms;
               keyboard_forward_active = true;
             }
-
             if (key == 'a') {
               usr_cmd_->side_vel_scale = AXIS_STEP;
               side_last_input_ms = current_time_ms;
@@ -278,7 +299,8 @@ class UserCommandInterface {
         }
       }
 
-      if (current_state == RobotMotionState::RLControl) {
+      if (current_state == RobotMotionState::RLControlMimic ||
+          current_state == RobotMotionState::RLControlAMP) {
         if (keyboard_forward_active && current_time_ms - forward_last_input_ms > KEY_HOLD_TIMEOUT_MS) {
           usr_cmd_->forward_vel_scale = 0.0f;
           keyboard_forward_active = false;
