@@ -21,7 +21,9 @@
 #include "zeropos_state.hpp"
 #include "idle_state.hpp"
 #include "joint_damping_state.hpp"
-#include "rl_control_state.hpp"
+#include "standup_state.hpp"
+#include "rl_control_mimic_state.hpp"
+#include "rl_control_amp_state.hpp"
 
 #include "safe_controller.hpp"
 #include "user_command_interface.hpp"
@@ -32,7 +34,9 @@ private:
     std::shared_ptr<StateBase> idle_controller_;
     std::shared_ptr<StateBase> zeropos_controller_;
     std::shared_ptr<StateBase> joint_damping_controller_;
-    std::shared_ptr<StateBase> rl_control_controller_;
+    std::shared_ptr<StateBase> standup_controller_;
+    std::shared_ptr<StateBase> rl_control_mimic_controller_;
+    std::shared_ptr<StateBase> rl_control_amp_controller_;
 
 public:
     int run_cnt_ = 0;
@@ -90,7 +94,9 @@ public:
         idle_controller_ = std::make_shared<IdleState>(robot_name_, "idle_state", data_ptr);
         zeropos_controller_ = std::make_shared<ZeroPosState>(robot_name_, "zeropos_state", data_ptr);
         joint_damping_controller_ = std::make_shared<JointDampingState>(robot_name_, "joint_damping", data_ptr);
-        rl_control_controller_ = std::make_shared<RLControlState>(robot_name_, "rl_control", data_ptr);
+        standup_controller_ = std::make_shared<StandUpState>(robot_name_, "standup", data_ptr);
+        rl_control_mimic_controller_ = std::make_shared<RLControlMimicState>(robot_name_, "rl_control_mimic", data_ptr);
+        rl_control_amp_controller_ = std::make_shared<RLControlAMPState>(robot_name_, "rl_control_amp", data_ptr);
 
         current_controller_ = idle_controller_;
         current_state_name_ = kIdle;
@@ -166,8 +172,14 @@ public:
             case StateName::kZeroPos: {
                 return zeropos_controller_;
             }
-            case StateName::kRLControl: {
-                return rl_control_controller_;
+            case StateName::kStandUp: {
+                return standup_controller_;
+            }
+            case StateName::kRLControlAMP: {
+                return rl_control_amp_controller_;
+            }
+            case StateName::kRLControlMimic: {
+                return rl_control_mimic_controller_;
             }
             default: {
                 std::cerr << "error state name" << std::endl;

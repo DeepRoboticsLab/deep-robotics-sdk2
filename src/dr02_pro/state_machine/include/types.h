@@ -59,9 +59,15 @@ struct UserCommand {
   double time_stamp;
   int safe_control_mode;
   uint8_t target_mode;
+  uint8_t target_policy;  ///< 0=AMP, 1=Mimic (used for direct policy switching)
   float forward_vel_scale;
   float side_vel_scale;
   float turning_vel_scale;
+};
+
+enum PolicyMode {
+    kAMP = 0,
+    kMimic = 1,
 };
 
 enum RobotName {
@@ -72,7 +78,9 @@ enum RobotMotionState {
     Idle = 0,
     JointDamping = 1,
     ZeroPos = 2,
-    RLControl = 3,
+    StandUp = 3,             ///< transition state, auto-switches after 3s
+    RLControlAMP = 4,
+    RLControlMimic = 5,
 };
 
 enum StateName {
@@ -80,7 +88,9 @@ enum StateName {
     kIdle = RobotMotionState::Idle,
     kJointDamping = RobotMotionState::JointDamping,
     kZeroPos = RobotMotionState::ZeroPos,
-    kRLControl = RobotMotionState::RLControl,
+    kStandUp = RobotMotionState::StandUp,
+    kRLControlAMP = RobotMotionState::RLControlAMP,
+    kRLControlMimic = RobotMotionState::RLControlMimic,
 };
 
 enum KeyCode {
