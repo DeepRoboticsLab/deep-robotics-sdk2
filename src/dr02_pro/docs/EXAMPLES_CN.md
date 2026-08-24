@@ -43,17 +43,18 @@ ros2 run dr02_pro <example_name> [args]
 | `motion_info_example` | `/MOTION_INFO` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro motion_info_example [--once]` | 打印当前运动状态和步态。 |
 | `motion_state_example` | `/MOTION_STATE` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro motion_state_example <motion_state_value>` | 发布运动状态切换命令。初始状态为 `Idle`，正常切换顺序为 `Idle -> SuspendedStand -> RLControl`；危险情况下可切换至 `JointDamping`。 |
 | `gait_example` | `/GAIT` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro gait_example <gait_value>` | 仅在机器人进入 `RLControl` 状态后使用，用于发布步态切换命令。 |
+| `action_example` | `/ACTION` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro action_example <action_id> --confirm` | 发布一个预设动作 ID。仅在机器人进入 `RLControl` 状态后使用，机器人会自动进入 `Action` 状态；动作完成后仍处于 `Action`，需另行切回 `RLControl`。 |
 | `steer_example` | `/STEER` | 高层运动控制模式 / 上半身关节控制模式 | 不支持 | `ros2 run dr02_pro steer_example` | 仅在机器人进入 `RLControl` 状态后使用。键盘速度控制使用固定的保守归一化速度 `0.6`；`W/S` 前后，`A/D` 左右，`Q/E` 转向；松开按键自动停，Ctrl+C 退出。 |
 | `steer_example` | `/REAL_STEER` | 高层运动控制模式 / 上半身关节控制模式 | 不支持 | `ros2 run dr02_pro steer_example --real` | 仅在机器人进入 `RLControl` 状态后使用。默认发布 3 秒 `yaw=0.4` 的旋转指令；可根据需要在示例代码中修改 `x`、`y` 和 `yaw`。 |
 
 > [!WARNING]
 >
 > - 实机切换至 `RLControl` 前，必须先将机器人放下并确认双脚稳定接触地面。吊绳可以保留用于保护，但不得使机器人处于悬空状态。悬空切换可能产生突然动作或失稳，造成人身伤害或设备损坏。
-> - `/STEER` 的 `x`、`y` 和 `yaw` 是范围为 `[-1.0, 1.0]` 的归一化控制比例，不是以 m/s 或 rad/s 表示的实际速度。`steer_example` 固定发布 `0.6`，实际运动速度由机器人状态、步态和控制策略决定。
-> - 应持续按住按键以形成连续指令；松开后对应方向将在约 320 ms 内归零。机器人可能先调整姿态或产生倾斜，部分步态、地面或负载条件下仍可能无法形成连续移动。
-> - 实机测试时，应确认机器人处于 `RLControl` 状态，并在空旷环境中一次只测试一个方向键。本示例仅用于展示 Topic 用法，不用于性能或最大速度测试，请勿自行增大固定值。
+> - `action_example`、`gait_example` 和 `steer_example` 都会产生运动或动作控制，运行前应确认运动空间安全。
+> - `/STEER` 的 `x`、`y` 和 `yaw` 是 `[-1.0, 1.0]` 的归一化比例，不是实际速度；示例固定使用 `0.6`，实际速度由机器人状态、步态和控制策略决定。
+> - 请持续按住按键；松开后约 `320 ms` 归零。机器人可能调整姿态或产生倾斜，实机测试时应在空旷环境中一次只测试一个方向键。本示例仅用于 Topic 验证，不用于性能或最大速度测试。
 
-支持的运动状态值：
+### 1. `motion_state_example` 参数
 
 | 数值 | 名称 | 说明 |
 | --- | --- | --- |
@@ -62,12 +63,29 @@ ros2 run dr02_pro <example_name> [args]
 | `0x11` | `RLControl` | RL 控制状态。 |
 | `0x20006` | `SuspendedStand` | 悬吊起立完成；将机器人放下并确认双脚接触地面后，方可进入 `RLControl`。 |
 
-支持的步态值：
+### 2. `gait_example` 参数
 
 | 数值 | 名称 | 说明 |
 | --- | --- | --- |
 | `0x21001` | `HumanWALKAMP` | 仿人走路。 |
 | `0x21006` | `HumanWALKTERRAIN` | 复杂地形走路。 |
+
+### 3. `action_example` 参数
+
+| ID | 名称 | 说明 |
+| --- | --- | --- |
+| `0x3000` | `greeting` | 庆祝动作。 |
+| `0x3001` | `kiss` | 飞吻动作。 |
+| `0x3002` | `handshake` | 握手动作。 |
+| `0x3003` | `salute` | 敬礼动作。 |
+| `0x3004` | `salute2` | 第二种敬礼动作。 |
+| `0x3005` | `wave_big` | 大幅招手动作。 |
+| `0x3006` | `wave_small` | 小幅招手动作。 |
+| `0x3007` | `guide` | 引导手势。 |
+| `0x3008` | `prepare_idle` | 返回准备姿态。 |
+| `0x3009` | `heart` | 比心动作。 |
+| `0x300a` | `ultraman` | 奥特曼动作。 |
+| `0x300b` | `clap` | 鼓掌动作。 |
 
 ## 状态监测示例
 

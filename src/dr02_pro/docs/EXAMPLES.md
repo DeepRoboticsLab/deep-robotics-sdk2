@@ -43,17 +43,18 @@ Preset upper-body action IDs:
 | `motion_info_example` | `/MOTION_INFO` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro motion_info_example [--once]` | Prints the current motion state and gait. |
 | `motion_state_example` | `/MOTION_STATE` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro motion_state_example <motion_state_value>` | Publishes a motion-state transition command. The initial state is `Idle`, and the normal transition sequence is `Idle -> SuspendedStand -> RLControl`; switch to `JointDamping` in a dangerous condition. |
 | `gait_example` | `/GAIT` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro gait_example <gait_value>` | Use only after the robot enters `RLControl`; publishes a gait transition command. |
+| `action_example` | `/ACTION` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro action_example <action_id> --confirm` | Publishes a preset action ID. Use only after the robot enters `RLControl`; the robot automatically enters the `Action` state and remains there after the action finishes. Switch back to `RLControl` separately. |
 | `steer_example` | `/STEER` | High-Level Motion Control Mode / Upper-Body Joint Control Mode | Not supported | `ros2 run dr02_pro steer_example` | Use only after the robot enters `RLControl`. Keyboard velocity control uses a fixed conservative normalized value of `0.6`; `W/S` moves forward/backward, `A/D` moves left/right, and `Q/E` turns. Releasing a key stops the command; Ctrl+C exits. |
 | `steer_example` | `/REAL_STEER` | High-Level Motion Control Mode / Upper-Body Joint Control Mode | Not supported | `ros2 run dr02_pro steer_example --real` | Use only after the robot enters `RLControl`. Publishes a rotation command with `yaw=0.4` for 3 seconds by default; modify `x`, `y`, and `yaw` in the example source as needed. |
 
 > [!WARNING]
 >
 > - Before switching a real robot to `RLControl`, lower it and confirm that both feet are firmly in contact with the ground. The safety suspension may remain attached, but it must not hold the robot off the ground. Switching while suspended may cause sudden motion or loss of stability, resulting in injury or equipment damage.
-> - `/STEER` values `x`, `y`, and `yaw` are normalized control ratios in `[-1.0, 1.0]`, not physical velocities in m/s or rad/s. `steer_example` publishes a fixed value of `0.6`; actual motion speed depends on the robot state, gait, and control policy.
-> - Hold a key to generate a continuous command. The corresponding direction returns to zero within approximately 320 ms after release. The robot may adjust its posture or lean before stepping, and some gait, surface, or load conditions may still prevent continuous movement.
-> - For real-robot testing, confirm that the robot is in `RLControl` and test only one direction key at a time in a clear area. This example demonstrates Topic usage and is not intended for performance or maximum-speed testing. Do not increase the fixed value without validation.
+> - `action_example`, `gait_example`, and `steer_example` generate robot motion or action commands. Confirm that the motion area is safe before running them.
+> - `/STEER` values `x`, `y`, and `yaw` are normalized ratios in `[-1.0, 1.0]`, not physical velocities. The example uses a fixed value of `0.6`; actual speed depends on the robot state, gait, and control policy.
+> - Hold a key to generate a continuous command; the command returns to zero approximately `320 ms` after release. The robot may adjust its posture or lean. Test only one direction at a time in a clear area. This example is intended for Topic verification, not performance or maximum-speed testing.
 
-Supported motion-state values:
+### 1. `motion_state_example` Parameters
 
 | Value | Name | Description |
 | --- | --- | --- |
@@ -62,12 +63,29 @@ Supported motion-state values:
 | `0x11` | `RLControl` | RL control state. |
 | `0x20006` | `SuspendedStand` | Suspended stand-up is complete; lower the robot and confirm that both feet contact the ground before entering `RLControl`. |
 
-Supported gait values:
+### 2. `gait_example` Parameters
 
 | Value | Name | Description |
 | --- | --- | --- |
 | `0x21001` | `HumanWALKAMP` | Humanoid walking. |
 | `0x21006` | `HumanWALKTERRAIN` | Complex-terrain walking. |
+
+### 3. `action_example` Parameters
+
+| ID | Name | Description |
+| --- | --- | --- |
+| `0x3000` | `greeting` | Celebration action. |
+| `0x3001` | `kiss` | Kiss action. |
+| `0x3002` | `handshake` | Handshake action. |
+| `0x3003` | `salute` | Salute action. |
+| `0x3004` | `salute2` | Alternate salute action. |
+| `0x3005` | `wave_big` | Large wave action. |
+| `0x3006` | `wave_small` | Small wave action. |
+| `0x3007` | `guide` | Guide gesture. |
+| `0x3008` | `prepare_idle` | Return to the ready posture. |
+| `0x3009` | `heart` | Heart gesture. |
+| `0x300a` | `ultraman` | Ultraman action. |
+| `0x300b` | `clap` | Clap action. |
 
 ## Monitoring Examples
 
