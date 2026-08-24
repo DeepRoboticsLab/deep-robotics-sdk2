@@ -113,7 +113,7 @@ In the `Supported modes` output, inspect the modes for the Depth Module and RGB 
 
 Before starting `realsense2_camera` or a program that directly calls the librealsense SDK, use the gamepad to enter Developer Mode. This is a robot-side preparation step that stops the internal camera driver and releases the camera devices.
 
-The cameras can be used in any of the three Developer Modes. See [Developer Modes](REAL_ROBOT.md#developer-mode) for the switching procedure. Running an SDK motion-control program at the same time is not required.
+The cameras can be used in any of the three Developer Modes. See [Developer Modes](DEVELOPER_MODE.md#handle-switching) for the switching procedure. Running an SDK motion-control program at the same time is not required.
 
 ### Use the ROS 2 Driver
 

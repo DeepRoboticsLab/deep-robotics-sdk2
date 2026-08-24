@@ -9,7 +9,7 @@ source install/setup.bash
 ros2 run dr02_std <example_name> [args]
 ```
 
-控制实机前，请先完成[实机部署与控制](REAL_ROBOT_CN.md)，并根据下表进入对应的开发者模式。使用仿真验证前，请根据“仿真支持”列确认示例是否支持，并参阅[仿真环境与运行](SIMULATION_CN.md)。
+控制实机前，请先完成[实机部署与控制](REAL_ROBOT_CN.md)，再参阅[开发者模式文档](DEVELOPER_MODE_CN.md)选择手柄或 SDK 示例切换方式，并根据下表进入对应的开发者模式。使用仿真验证前，请根据“仿真支持”列确认示例是否支持，并参阅[仿真环境与运行](SIMULATION_CN.md)。
 
 > [!WARNING]
 >

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0] - 2026-08-17
+
+### Added
+
+- Added `developer_mode_example` for entering and exiting High-Level Motion, Whole-Body Joint, and Upper-Body Joint Control Modes.
+- Added dedicated English and Chinese Developer Mode documentation for gamepad and SDK-based switching.
+
 ## [1.1.0] - 2026-08-04
 
 ### Added

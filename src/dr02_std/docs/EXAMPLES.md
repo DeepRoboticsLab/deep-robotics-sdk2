@@ -9,7 +9,7 @@ source install/setup.bash
 ros2 run dr02_std <example_name> [args]
 ```
 
-Before controlling the real robot, complete [Real-Robot Deployment and Control](REAL_ROBOT.md) and enter the Developer Mode listed below. Before simulation validation, check the Simulation Support column and see [Simulation Environment and Operation](SIMULATION.md).
+Before controlling the real robot, complete [Real-Robot Deployment and Control](REAL_ROBOT.md), then see [Developer Modes](DEVELOPER_MODE.md) to choose the gamepad or SDK example switching method and enter the required mode. Before simulation validation, check the Simulation Support column and see [Simulation Environment and Operation](SIMULATION.md).
 
 > [!WARNING]
 >

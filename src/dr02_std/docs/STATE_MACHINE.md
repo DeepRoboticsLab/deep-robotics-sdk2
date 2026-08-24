@@ -8,7 +8,7 @@ The DR02 Std state machine subscribes to `/JOINTS_DATA`, publishes `/JOINTS_CMD`
 
 ### Real-Robot Control
 
-Before running on the real robot, complete [Real-Robot Deployment](REAL_ROBOT.md) and enter the correct [Developer Mode](REAL_ROBOT.md#developer-mode).
+Before running on the real robot, complete [Real-Robot Deployment](REAL_ROBOT.md) and follow the [Developer Modes](DEVELOPER_MODE.md#handle-switching) procedure to enter Whole-Body Joint Control Mode.
 
 > [!IMPORTANT]
 >

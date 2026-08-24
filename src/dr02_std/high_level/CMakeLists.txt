@@ -7,6 +7,10 @@ foreach(example_source ${HIGH_LEVEL_SOURCES})
     deep_robotics_common
     rclcpp
     drdds
+    std_msgs
+  )
+  target_include_directories(${example_name} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../third_party
   )
   install(TARGETS ${example_name}
     RUNTIME DESTINATION lib/${PROJECT_NAME}

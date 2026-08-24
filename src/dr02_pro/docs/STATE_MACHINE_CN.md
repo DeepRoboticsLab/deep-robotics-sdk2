@@ -8,7 +8,7 @@ DR02 Pro 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，并在 RL 控�
 
 ### 实机控制
 
-实机运行前，请先完成[实机部署](REAL_ROBOT_CN.md)并进入正确的[开发者模式](REAL_ROBOT_CN.md#developer-mode)。
+实机运行前，请先完成[实机部署](REAL_ROBOT_CN.md)，并按照[开发者模式文档](DEVELOPER_MODE_CN.md#handle-switching)进入全身关节控制模式。
 
 > [!IMPORTANT]
 >

@@ -113,7 +113,7 @@ rs-enumerate-devices
 
 启动 `realsense2_camera` 或直接调用 librealsense SDK 的程序前，需要先通过手柄进入开发者模式。这是机器人侧的准备操作，用于停止内部相机驱动并释放相机设备。
 
-三种开发者控制模式中的任意一种均可使用相机，具体切换步骤请参阅[开发者模式](REAL_ROBOT_CN.md#developer-mode)。使用相机不要求同时启动 SDK 运动控制程序。
+三种开发者控制模式中的任意一种均可使用相机，具体切换步骤请参阅[开发者模式文档](DEVELOPER_MODE_CN.md#handle-switching)。使用相机不要求同时启动 SDK 运动控制程序。
 
 ### 使用 ROS 2 驱动
 
