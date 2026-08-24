@@ -34,12 +34,16 @@ This ROS 2 package provides the DR02 Pro motion-control state machine and standa
 | [State Machine](docs/STATE_MACHINE.md) | State transitions, runtime commands, keyboard control, gamepad control, and safety requirements |
 | [Topic Examples](docs/EXAMPLES.md) | Topics, real-robot Developer Modes, simulation support, runtime commands, and notes for all examples |
 | [RealSense Cameras](docs/CAMERA.md) | Camera driver installation on the NOS host, ROS 2 driver usage, the librealsense C/C++ interface, the pyrealsense2 Python interface, three-camera startup, and Topic verification |
+| [Joint Control Interface](docs/JOINT_CONTROL.md) | Joint message fields, array order, controllable ranges, units, and zero-position definition |
 
-## Workflow
+## Quick Start
 
-1. Select [Real-Robot Deployment and Control](docs/REAL_ROBOT.md) or [Simulation Environment and Operation](docs/SIMULATION.md) according to the control target.
-2. Prepare the environment and build the SDK according to the selected document.
-3. Run the [State Machine](docs/STATE_MACHINE.md) or the required [Topic Example](docs/EXAMPLES.md).
+For the first run, select the environment setup document according to the control target, then follow the links in the next-step column for the required mode and examples.
+
+| Control target | Environment setup | Next step |
+| --- | --- | --- |
+| Real robot | [Real-Robot Deployment and Control](docs/REAL_ROBOT.md) | Read [Developer Mode](docs/DEVELOPER_MODE.md), then choose [State Machine](docs/STATE_MACHINE.md) or [Topic Examples](docs/EXAMPLES.md) |
+| Simulation | [Simulation Environment and Operation](docs/SIMULATION.md) | Choose [State Machine](docs/STATE_MACHINE.md) or [Topic Examples](docs/EXAMPLES.md) according to simulation support |
 
 > [!IMPORTANT]
 >

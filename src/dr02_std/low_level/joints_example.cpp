@@ -98,11 +98,11 @@ private:
 
         RCLCPP_INFO(get_logger(), "frame=%lu joints=%zu", static_cast<unsigned long>(msg->header.frame_id),
                     msg->data.size());
-        RCLCPP_INFO(get_logger(), "idx position velocity torque status motor_temp driver_temp");
+        RCLCPP_INFO(get_logger(), "idx position velocity torque motor_temp driver_temp");
         for (std::size_t i = 0; i < msg->data.size(); ++i) {
             const auto& joint = msg->data[i];
-            RCLCPP_INFO(get_logger(), "%zu %.6f %.6f %.6f %u %.1f %.1f", i, joint.position, joint.velocity,
-                        joint.torque, joint.status_word, joint.motion_temp, joint.driver_temp);
+            RCLCPP_INFO(get_logger(), "%zu %.6f %.6f %.6f %.1f %.1f", i, joint.position, joint.velocity,
+                        joint.torque, joint.motion_temp, joint.driver_temp);
         }
         start_time_ = now();
         initial_state_ready_ = true;
@@ -144,7 +144,6 @@ private:
                     static_cast<float>(kMoveDurationSec));
             }
 
-            msg.data[i].data_id = static_cast<uint16_t>(i);
             msg.data[i].control_word = 4;
             msg.data[i].position = target_position;
             msg.data[i].velocity = target_velocity;

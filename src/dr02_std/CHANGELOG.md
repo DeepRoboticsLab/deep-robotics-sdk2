@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1] - 2026-08-24
+
+### Changed
+
+- Updated the product README and Topic Examples documentation.
+- Added joint-control interface documentation covering message fields, units, array order, controllable ranges, and zero-position definitions.
+
 ## [1.1.0] - 2026-08-17
 
 ### Added

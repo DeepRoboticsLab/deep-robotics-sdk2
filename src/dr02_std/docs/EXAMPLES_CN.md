@@ -36,6 +36,10 @@ ros2 run dr02_std <example_name> [args]
 | `3` | `salute` |
 | `4` | `salute2` |
 
+### 关节接口
+
+关节消息字段、单位、数组顺序、可控范围和零位说明参阅[关节控制接口](JOINT_CONTROL_CN.md)。
+
 ## 高层示例
 
 | 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |

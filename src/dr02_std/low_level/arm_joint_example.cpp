@@ -115,7 +115,6 @@ private:
                     static_cast<float>(kMoveDurationSec));
             }
 
-            msg.data[i].data_id = static_cast<uint16_t>(i);
             msg.data[i].control_word = 4;
             msg.data[i].position = target_position;
             msg.data[i].velocity = target_velocity;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>dr02_pro</name>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
   <description>DR02 Pro ROS2 SDK with state machine and topic examples</description>
   <maintainer email="ysc@deeprobotics.cn">ysc</maintainer>
   <license>BSD-3-Clause</license>

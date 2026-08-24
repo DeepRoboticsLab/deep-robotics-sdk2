@@ -445,7 +445,6 @@ private:
         msg.data.resize(kDofNum);
 
         for (int i = 0; i < kDofNum; ++i) {
-            msg.data[i].data_id = static_cast<uint16_t>(i);
             msg.data[i].control_word = 4;
             msg.data[i].position = planning_joint_pos[i];
             msg.data[i].velocity = planning_joint_vel[i];

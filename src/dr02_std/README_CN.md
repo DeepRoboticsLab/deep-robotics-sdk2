@@ -32,12 +32,16 @@
 | [仿真环境与运行](docs/SIMULATION_CN.md) | SDK 仿真编译、运行方式和支持范围 |
 | [状态机](docs/STATE_MACHINE_CN.md) | 状态流转、运行命令、键盘控制、手柄控制和安全要求 |
 | [Topic 示例](docs/EXAMPLES_CN.md) | 全部示例的 Topic、实机开发者模式、仿真支持、运行命令和注意事项 |
+| [关节控制接口](docs/JOINT_CONTROL_CN.md) | 关节消息字段、数组顺序、可控范围、单位和零位定义 |
 
-## 使用流程
+## 快速开始
 
-1. 根据控制目标选择[实机部署与控制](docs/REAL_ROBOT_CN.md)或[仿真环境与运行](docs/SIMULATION_CN.md)。
-2. 按对应文档准备环境并编译 SDK。
-3. 运行[状态机](docs/STATE_MACHINE_CN.md)或目标 [Topic 示例](docs/EXAMPLES_CN.md)。
+首次使用时，根据控制目标选择环境准备文档，再按下一步链接阅读对应的模式和示例说明。
+
+| 控制目标 | 环境准备 | 下一步 |
+| --- | --- | --- |
+| 实机 | [实机部署与控制](docs/REAL_ROBOT_CN.md) | 阅读[开发者模式](docs/DEVELOPER_MODE_CN.md)，再选择[状态机](docs/STATE_MACHINE_CN.md)或[Topic 示例](docs/EXAMPLES_CN.md) |
+| 仿真 | [仿真环境与运行](docs/SIMULATION_CN.md) | 根据仿真支持范围选择[状态机](docs/STATE_MACHINE_CN.md)或[Topic 示例](docs/EXAMPLES_CN.md) |
 
 > [!IMPORTANT]
 >

@@ -36,6 +36,10 @@ Preset upper-body action IDs:
 | `3` | `salute` |
 | `4` | `salute2` |
 
+### Joint Interfaces
+
+For joint message fields, units, array order, controllable ranges, and zero-position definition, see [Joint Control Interface](JOINT_CONTROL.md).
+
 ## High-Level Examples
 
 | Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |

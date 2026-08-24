@@ -26,6 +26,10 @@ Before controlling the real robot, complete [Real-Robot Deployment and Control](
 | `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | Upper-Body Joint Control Mode | Supported | `ros2 run dr02_pro arm_joint_example --confirm` | Prints `/JOINTS_DATA` receive latency and moves the waist and both arms from their current positions to zero. |
 | `arm_action_example` | `/JOINTS_CMD` | Upper-Body Joint Control Mode | Supported | `ros2 run dr02_pro arm_action_example <action_id> --confirm` | Executes a preset waist and upper-body action. |
 
+### Joint Interfaces
+
+For joint message fields, units, array order, controllable ranges, and zero-position definition, see [Joint Control Interface](JOINT_CONTROL.md).
+
 Preset upper-body action IDs:
 
 | ID | Name |
