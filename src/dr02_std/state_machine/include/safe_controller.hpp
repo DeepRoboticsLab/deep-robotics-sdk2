@@ -100,7 +100,6 @@ private:
         if (current_time_ - imu_check_time_ > 40) {
             robot_error_state_.imu_update_overtime = 1;
             res = false;
-            std::cout << (current_time_) << ", " << (imu_check_time_) << std::endl;
         }
         for (int i = 0; i < 3; ++i) {
             if (std::isnan(rpy(i)) || std::isnan(acc(i)) || std::isnan(omg(i))) {
@@ -151,12 +150,6 @@ private:
                 joint_data_same_cnt_[i]++;
             } else {
                 joint_data_same_cnt_[i] = 0;
-            }
-            if (joint_data_same_cnt_[i] > 30) {
-                std::cout << "joint pos: " << joint_pos[i] << std::endl;
-                std::cerr << "joint " << i << " data is not update " << joint_data_same_cnt_[i] << " times at "
-                          << ri_ts_ << " | " << current_time_ << std::endl;
-                std::cout << "rpy: " << (ri_ptr_->GetImuBaseRpy()).transpose() << std::endl;
             }
             if (joint_data_same_cnt_[i] > 100) {
                 robot_error_state_.joint_num_error = 1;
@@ -275,11 +268,9 @@ public:
 
             if (!IsJointDataNormal()) {
                 usr_cmd_->safe_control_mode = 3;
-                std::cout << "Joint data error!" << std::endl;
             }
             if (run_cnt_ % 1000 == 0 && !IsMotorTemperatureNormal()) {
                 usr_cmd_->safe_control_mode = 2;
-                std::cout << "Motor temperature error!" << std::endl;
             }
             if (!IsImuDataNormal()) {
                 usr_cmd_->safe_control_mode = 4;
@@ -287,7 +278,6 @@ public:
 
             if (last_error_code_ != robot_error_state_.error_code) {
                 if (robot_error_state_.error_code != 0) {
-                    std::cout << "error_code: " << std::hex << robot_error_state_.error_code << std::endl;
                     PrintRobotErrorState();
                 }
                 last_error_code_ = robot_error_state_.error_code;

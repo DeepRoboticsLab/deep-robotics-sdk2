@@ -155,11 +155,7 @@ public:
     virtual StateName GetNextStateName() {
         // Safety check: force damping on safety violation
         if (uc_ptr_->GetUserCommand()->safe_control_mode != 0 ||
-            uc_ptr_->GetUserCommand()->target_mode ==
-                uint8_t(RobotMotionState::JointDamping)) {
-            std::cout << "safe_control_mode:"
-                      << std::dec << uc_ptr_->GetUserCommand()->safe_control_mode
-                      << std::endl;
+            uc_ptr_->GetUserCommand()->target_mode == uint8_t(RobotMotionState::JointDamping)) {
             return StateName::kJointDamping;
         }
 

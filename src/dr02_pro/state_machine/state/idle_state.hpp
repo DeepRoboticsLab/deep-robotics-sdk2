@@ -47,7 +47,6 @@ public:
     virtual StateName GetNextStateName() {
 
         if (uc_ptr_->GetUserCommand()->safe_control_mode != 0) {
-            std::cout << "safe_control_mode:" << std::dec << uc_ptr_->GetUserCommand()->safe_control_mode << std::endl;
             return StateName::kIdle;
         }
 
