@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.0] - 2026-08-28
+
+### Added
+
+- Added `action_info_example` for viewing the currently executing built-in action.
+
 ## [1.1.1] - 2026-08-24
 
 ### Changed

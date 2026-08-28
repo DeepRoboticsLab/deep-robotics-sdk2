@@ -24,7 +24,7 @@ Before controlling the real robot, complete [Real-Robot Deployment and Control](
 | `joints_example` | `/JOINTS_DATA` | Whole-Body Joint Control Mode | Supported | `ros2 run dr02_pro joints_example` | Prints one complete DR02 Pro joint-state frame and exits. |
 | `joints_example` | `/JOINTS_CMD` | Whole-Body Joint Control Mode | Supported | `ros2 run dr02_pro joints_example --confirm` | Moves all 31 joints smoothly to the zero position and holds the command. |
 | `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | Upper-Body Joint Control Mode | Supported | `ros2 run dr02_pro arm_joint_example --confirm` | Prints `/JOINTS_DATA` receive latency and moves the waist and both arms from their current positions to zero. |
-| `arm_action_example` | `/JOINTS_CMD` | Upper-Body Joint Control Mode | Supported | `ros2 run dr02_pro arm_action_example <action_id> --confirm` | Executes a preset waist and upper-body action. |
+| `arm_action_example` | `/JOINTS_CMD` | Upper-Body Joint Control Mode | Supported | `ros2 run dr02_pro arm_action_example <action_id> --confirm` | Publishes `/JOINTS_CMD` directly to control the waist and upper-body joints; modify the joint trajectories in the example to define custom actions. |
 
 ### Joint Interfaces
 
@@ -44,10 +44,11 @@ Preset upper-body action IDs:
 
 | Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
-| `motion_info_example` | `/MOTION_INFO` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro motion_info_example [--once]` | Prints the current motion state and gait. |
+| `motion_info_example` | `/MOTION_INFO` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro motion_info_example [--once]` | Shows the motion state selected through `/MOTION_STATE` and the current gait. |
 | `motion_state_example` | `/MOTION_STATE` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro motion_state_example <motion_state_value>` | Publishes a motion-state transition command. The initial state is `Idle`, and the normal transition sequence is `Idle -> SuspendedStand -> RLControl`; switch to `JointDamping` in a dangerous condition. |
 | `gait_example` | `/GAIT` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro gait_example <gait_value>` | Use only after the robot enters `RLControl`; publishes a gait transition command. |
-| `action_example` | `/ACTION` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro action_example <action_id> --confirm` | Publishes a preset action ID. Use only after the robot enters `RLControl`; the robot automatically enters the `Action` state and remains there after the action finishes. Switch back to `RLControl` separately. |
+| `action_example` | `/ACTION` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro action_example <action_id> --confirm` | Executes a robot built-in action. Use only after the robot enters `RLControl`; the robot automatically enters the `Action` motion state and remains there after the action finishes. Switch back to `RLControl` separately. |
+| `action_info_example` | `/ACTION_INFO` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_pro action_info_example` | Shows the built-in action currently being executed; `0` means no action is being executed, and a nonzero value is the current action ID. |
 | `steer_example` | `/STEER` | High-Level Motion Control Mode / Upper-Body Joint Control Mode | Not supported | `ros2 run dr02_pro steer_example` | Use only after the robot enters `RLControl`. Keyboard velocity control uses a fixed conservative normalized value of `0.6`; `W/S` moves forward/backward, `A/D` moves left/right, and `Q/E` turns. Releasing a key stops the command; Ctrl+C exits. |
 | `steer_example` | `/REAL_STEER` | High-Level Motion Control Mode / Upper-Body Joint Control Mode | Not supported | `ros2 run dr02_pro steer_example --real` | Use only after the robot enters `RLControl`. Publishes a rotation command with `yaw=0.4` for 3 seconds by default; modify `x`, `y`, and `yaw` in the example source as needed. |
 
