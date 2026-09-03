@@ -4,6 +4,8 @@
 
 DR02 Pro 配置三台 Intel RealSense D435 深度相机，可提供彩色图像和深度图像，为环境感知、目标识别和三维视觉等应用提供数据。三台相机均通过 USB 连接至 NOS 主机（`10.21.33.106`），相机驱动及相关程序应在该设备上安装和运行。
 
+本文只涉及三台 RealSense 深度相机。DR02 Pro 上还有一台挂在 AOS 主机上的前向 RGB 相机，它不是 RealSense 相机，不由 `realsense2_camera` 打开，也不发布任何 ROS 2 Topic。三台 RealSense 相机的安装角度固定，可能并不包含沿行进方向的视野；在至少一台 DR02 Pro 上，三台相机均向下倾斜安装。如果需要前向视野，请参阅[前向 RGB 相机](FORWARD_CAMERA_CN.md)。
+
 > [!NOTE]
 >
 > 本文中的 RealSense 驱动部署、ROS 2 驱动使用和 librealsense SDK 调用均采用官方提供的方式。软件包、依赖关系、启动参数和 API 可能随版本更新，最新要求以 [RealSense ROS 2 Wrapper](https://github.com/realsenseai/realsense-ros) 和 [librealsense SDK](https://github.com/realsenseai/librealsense) 官方文档为准。DR02 Pro 特有的产品操作将在对应步骤中单独说明。

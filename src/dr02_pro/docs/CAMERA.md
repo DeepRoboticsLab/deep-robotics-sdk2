@@ -4,6 +4,8 @@
 
 The DR02 Pro is equipped with three Intel RealSense D435 depth cameras that provide color and depth images for applications such as environmental perception, object recognition, and 3D vision. All three cameras connect through USB to the NOS host (`10.21.33.106`). Camera drivers and related programs should be installed and run on this device.
 
+This document covers the three RealSense depth cameras only. The DR02 Pro also carries a forward-facing RGB camera attached to the AOS host, which is not a RealSense, is not opened by `realsense2_camera`, and publishes no ROS 2 Topic. The three RealSense units are mounted at fixed angles that may not include a view along the direction of travel; on at least one DR02 Pro all three were angled downward. If a forward view is required, see [Forward RGB Camera](FORWARD_CAMERA.md).
+
 > [!NOTE]
 >
 > The RealSense driver deployment, ROS 2 driver usage, and librealsense SDK calls in this document follow the official methods. Packages, dependencies, launch parameters, and APIs may change between versions. Refer to the official [RealSense ROS 2 Wrapper](https://github.com/realsenseai/realsense-ros) and [librealsense SDK](https://github.com/realsenseai/librealsense) documentation for the latest requirements. DR02 Pro-specific operations are identified separately in the relevant steps.

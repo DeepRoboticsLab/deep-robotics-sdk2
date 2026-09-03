@@ -12,6 +12,7 @@ This ROS 2 package provides the DR02 Pro motion-control state machine and standa
 - Monitoring examples for battery state and current-fault snapshots
 - Peripheral Topic examples for IMU and gamepad keys
 - RealSense depth-camera deployment and usage documentation
+- Forward-facing RGB camera access over RTSP
 - Audio examples for WAV playback, volume control, and recording
 
 ## Directory Layout
@@ -34,6 +35,7 @@ This ROS 2 package provides the DR02 Pro motion-control state machine and standa
 | [State Machine](docs/STATE_MACHINE.md) | State transitions, runtime commands, keyboard control, gamepad control, and safety requirements |
 | [Topic Examples](docs/EXAMPLES.md) | Topics, real-robot Developer Modes, simulation support, runtime commands, and notes for all examples |
 | [RealSense Cameras](docs/CAMERA.md) | Camera driver installation on the NOS host, ROS 2 driver usage, the librealsense C/C++ interface, the pyrealsense2 Python interface, three-camera startup, and Topic verification |
+| [Forward RGB Camera](docs/FORWARD_CAMERA.md) | The forward-facing RGB camera on the AOS host: RTSP stream address, required transport settings, how to tell a decoded frame from an undecoded one, and how to keep camera viewing off the robot's CPU |
 | [Joint Control Interface](docs/JOINT_CONTROL.md) | Joint message fields, array order, controllable ranges, units, and zero-position definition |
 
 ## Quick Start

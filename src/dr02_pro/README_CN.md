@@ -12,6 +12,7 @@
 - 电池状态和当前故障快照监测示例
 - IMU 和手柄按键外设 Topic 示例
 - RealSense 深度相机部署和使用说明
+- 前向 RGB 相机的 RTSP 访问方式
 - WAV 文件播放、音量控制和录音示例
 
 ## 目录结构
@@ -34,6 +35,7 @@
 | [状态机](docs/STATE_MACHINE_CN.md) | 状态流转、运行命令、键盘控制、手柄控制和安全要求 |
 | [Topic 示例](docs/EXAMPLES_CN.md) | 全部示例的 Topic、实机开发者模式、仿真支持、运行命令和注意事项 |
 | [RealSense 相机](docs/CAMERA_CN.md) | NOS 主机上的相机驱动安装、ROS 2 驱动、librealsense C/C++ 接口、pyrealsense2 Python 接口、三相机启动和 Topic 验证 |
+| [前向 RGB 相机](docs/FORWARD_CAMERA_CN.md) | AOS 主机上的前向 RGB 相机：RTSP 地址、必需的传输设置、如何区分已解码与未解码图像，以及如何避免查看相机占用机器人 CPU |
 | [关节控制接口](docs/JOINT_CONTROL_CN.md) | 关节消息字段、数组顺序、可控范围、单位和零位定义 |
 
 ## 快速开始
