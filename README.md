@@ -19,6 +19,10 @@ src/<product>/    Product-specific ROS 2 packages, deployment instructions, and 
 third_party/      Third-party source and integration files
 ```
 
+## Working with Coding Agents
+
+[`AGENTS.md`](AGENTS.md) ([中文](AGENTS_CN.md)) collects the rules a coding agent should follow when writing code that drives a DEEPRobotics robot: which Developer Mode a task needs, how joint commands and gains are structured per product, and the interface behaviours that fail without producing an error. It is organised as a common section followed by one section per product.
+
 ## Related Repositories
 
 - [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg): ROS 2 message interface package used by the SDK. Its ROS 2 package name is `drdds`.
