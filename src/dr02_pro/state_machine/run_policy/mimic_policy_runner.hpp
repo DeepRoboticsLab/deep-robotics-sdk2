@@ -11,7 +11,7 @@
 #pragma once
 
 #include "policy_runner_base.hpp"
-#include "json_loader.hpp"
+#include "npz_loader.hpp"
 #include <filesystem>
 #include <cmath>
 #include <chrono>
@@ -62,7 +62,7 @@ private:
     std::vector<int> policy_to_output_idx_; ///< policy_order → output_order
 
     // --- Motion data ---
-    JsonLoader motion_loader_;
+    NpzLoader motion_loader_;
     std::vector<VecXf> motion_joint_pos_;
     std::vector<VecXf> motion_joint_vel_;
     int data_cnt_ = 0;                       ///< current motion frame index
@@ -119,7 +119,7 @@ public:
      * @brief Construct a MimicPolicyRunner.
      *
      * Initializes joint order mappings, control parameters, ONNX session,
-     * and loads motion data from JSON.
+     * and loads motion data from NPZ.
      *
      * @param policy_name Name used for logging.
      * @param robot_name  Robot identifier (determines parameter layout).
@@ -248,7 +248,7 @@ public:
             namespace fs = std::filesystem;
             const fs::path base = fs::path(__FILE__).parent_path();
             const std::string motion_path =
-                fs::canonical(base / ".." / "json_data" / "fist_routine.json");
+                fs::canonical(base / ".." / "motion_data" / "fist_routine.npz");
             if (motion_loader_.load(motion_path)) {
                 motion_loader_.get_key_data("joint_pos", motion_joint_pos_);
                 motion_loader_.get_key_data("joint_vel", motion_joint_vel_);
