@@ -172,7 +172,7 @@ class UserCommandInterface {
         }
         break;
       case KeyCode::R1:
-        if (current_state == RobotMotionState::ZeroPos) {
+        if (current_state == RobotMotionState::RLControlAMP) {
           usr_cmd_->target_policy = uint8_t(PolicyMode::kMimic);
           usr_cmd_->target_mode = uint8_t(RobotMotionState::RLControlMimic);
           std::cout << "[MODE] Mimic\n";
