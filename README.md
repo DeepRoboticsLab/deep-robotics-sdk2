@@ -4,14 +4,14 @@
 
 DEEPRobotics SDK provides ROS 2 packages and Topic examples for supported DEEPRobotics products. Product-specific deployment, runtime modes, state machines, and examples are documented in the corresponding product directories.
 
-## Products
+## 1. Products
 
 | Product | ROS 2 Package | Product Documentation |
 | --- | --- | --- |
 | DR02 Pro | `dr02_pro` | [English](src/dr02_pro/README.md) / [中文](src/dr02_pro/README_CN.md) |
 | DR02 Std | `dr02_std` | [English](src/dr02_std/README.md) / [中文](src/dr02_std/README_CN.md) |
 
-## Repository Layout
+## 2. Repository Layout
 
 ```text
 scripts/          Dependency installation helpers
@@ -20,7 +20,7 @@ src/<product>/    Product-specific ROS 2 packages, deployment instructions, and 
 third_party/      Third-party source and integration files
 ```
 
-## Robot Hosts
+## 3. Robot Hosts
 
 | Host | Address | Ubuntu | ROS 2 | Architecture | Internet |
 | --- | --- | --- | --- | --- | --- |
@@ -31,7 +31,7 @@ Download sources on an internet-connected development computer and transfer them
 through the robot's local network. Build natively on the target host for its ROS
 version. See the product's real-robot guide for the transfer and SDK build commands.
 
-## Install the Message Interfaces
+## 4. Install the Message Interfaces
 
 The script checks dependencies, downloads [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git),
 and builds and installs its Debian package. Missing dependencies are reported;
@@ -65,7 +65,7 @@ Optional: `--ref <tag-or-commit>` selects the downloaded revision (default: `mai
 `--jobs N` sets compiler parallelism (default: 2). `--ref` cannot be combined with
 `--source-dir`. See `--help` for usage.
 
-## Related Repositories
+## 5. Related Repositories
 
 - [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git): ROS 2 message interface package used by the SDK. Its ROS 2 package name is `drdds`.
 - [deep-robotics-simulation](https://github.com/DeepRoboticsLab/deep-robotics-simulation): MuJoCo simulation environments for DEEPRobotics products.

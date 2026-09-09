@@ -17,7 +17,7 @@ Before controlling the real robot, complete [Real-Robot Deployment and Control](
 >
 > Upper-body joint-control examples must be run in Upper-Body Joint Control Mode. If they are run in Whole-Body Joint Control Mode, the leg joints may lose support because they do not receive valid control commands, causing the robot to fall.
 
-## Low-Level Examples
+## 1. Low-Level Examples
 
 | Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
@@ -36,11 +36,11 @@ Preset upper-body action IDs:
 | `3` | `salute` |
 | `4` | `salute2` |
 
-### Joint Interfaces
+### 1.1 Joint Interfaces
 
 For joint message fields, units, array order, controllable ranges, and zero-position definition, see [Joint Control Interface](JOINT_CONTROL.md).
 
-## High-Level Examples
+## 2. High-Level Examples
 
 | Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 > - `/STEER` values `x`, `y`, and `yaw` are normalized ratios in `[-1.0, 1.0]`, not physical velocities. The example uses a fixed value of `0.6`; actual speed depends on the robot state, gait, and control policy.
 > - Hold a key to generate a continuous command; the command returns to zero approximately `320 ms` after release. The robot may adjust its posture or lean. Test only one direction at a time in a clear area. This example is intended for Topic verification, not performance or maximum-speed testing.
 
-### 1. `motion_state_example` Parameters
+### 2.1 `motion_state_example` Parameters
 
 | Value | Name | Description |
 | --- | --- | --- |
@@ -68,14 +68,14 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 | `0x11` | `RLControl` | RL control state. |
 | `0x20006` | `SuspendedStand` | Suspended stand-up is complete; lower the robot and confirm that both feet contact the ground before entering `RLControl`. |
 
-### 2. `gait_example` Parameters
+### 2.2 `gait_example` Parameters
 
 | Value | Name | Description |
 | --- | --- | --- |
 | `0x21001` | `HumanWALKAMP` | Humanoid walking. |
 | `0x21006` | `HumanWALKTERRAIN` | Complex-terrain walking. |
 
-### 3. `action_example` Parameters
+### 2.3 `action_example` Parameters
 
 | ID | Name | Description |
 | --- | --- | --- |
@@ -86,14 +86,14 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 | `0x3004` | `salute2` | Alternate salute action. |
 | `0x3008` | `prepare_idle` | Return to the ready posture. |
 
-## Monitoring Examples
+## 3. Monitoring Examples
 
 | Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
 | `battery_state_example` | `/BATTERY_DATA` | Any | Not supported | `ros2 run dr02_std battery_state_example` | Prints battery level, voltage, current, and protection state. |
 | `fault_snapshot_example` | `/fault_aggregator` | Any | Not supported | `ros2 run dr02_std fault_snapshot_example` | Subscribes to `drdds/msg/FaultEventArray` and prints the current-fault snapshot. |
 
-### Current Fault Snapshot
+### 3.1 Current Fault Snapshot
 
 `/fault_aggregator` uses fault-state-change triggers and periodic reporting. It immediately publishes the current active-fault snapshot when a fault is detected, also publishes when other fault states change, and continues publishing snapshots periodically. Repeated snapshots with the same content do not mean that the faults occurred again; an empty `active_faults` array means that no faults are currently active.
 
@@ -108,14 +108,14 @@ The example displays only the information needed to identify and assess a fault:
 
 Severity increases from `DEBUG(0)`, `INFO(1)`, `NOTICE(2)`, `WARN(3)`, `ERROR(4)`, `CRITICAL(5)`, and `ALERT(6)` to `EMERG(7)`. Product-specific protection and recovery behavior depends on the fault. The example skips unchanged periodic snapshots to avoid duplicate output; other message fields are reserved for internal diagnostics and are not displayed.
 
-## Peripheral Examples
+## 4. Peripheral Examples
 
 | Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
 | `imu_example` | `/IMU_DATA_BASE` | Any | Not supported | `ros2 run dr02_std imu_example` | Subscribes to `sensor_msgs/msg/Imu` and prints the base IMU quaternion, angular velocity, and linear acceleration. |
 | `gamepad_key_example` | `/GAMEPAD_KEY` | Any | Not supported | `ros2 run dr02_std gamepad_key_example` | Prints gamepad key events. |
 
-## Audio Examples
+## 5. Audio Examples
 
 Audio examples play WAV files that already exist in the robot-side audio directory. Copy a file to `/var/opt/robot/data/audio/`, then publish the file name through `/AUDIO/PLAY_FILE` to start playback.
 

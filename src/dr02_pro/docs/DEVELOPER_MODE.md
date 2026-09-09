@@ -6,17 +6,17 @@ This document describes the DR02 Pro Developer Modes, their control scopes, and 
 
 <a id="developer-mode"></a>
 
-## Mode Overview
+## 1. Mode Overview
 
 Developer Mode grants the SDK access to the robot's motion-control capabilities. It provides High-Level Motion Control Mode, Whole-Body Joint Control Mode, and Upper-Body Joint Control Mode. Confirm the mode required by the target program before running it.
 
 | Developer Mode | Control Scope | Applicable Examples |
 | --- | --- | --- |
-| High-Level Motion Control Mode | The SDK controls motion through high-level commands such as `/MOTION_STATE`, `/GAIT`, and `/STEER`; the robot's internal control policy controls the joints | [High-level examples](EXAMPLES.md#high-level-examples) |
-| Whole-Body Joint Control Mode | The SDK directly controls all joints through `/JOINTS_CMD` | [State Machine](STATE_MACHINE.md), [low-level examples](EXAMPLES.md#low-level-examples) |
-| Upper-Body Joint Control Mode | The SDK controls the waist and both arms through `/JOINTS_CMD`; the robot's internal policy controls the leg joints | [Low-level examples](EXAMPLES.md#low-level-examples) |
+| High-Level Motion Control Mode | The SDK controls motion through high-level commands such as `/MOTION_STATE`, `/GAIT`, and `/STEER`; the robot's internal control policy controls the joints | [High-level examples](EXAMPLES.md#2-high-level-examples) |
+| Whole-Body Joint Control Mode | The SDK directly controls all joints through `/JOINTS_CMD` | [State Machine](STATE_MACHINE.md), [low-level examples](EXAMPLES.md#1-low-level-examples) |
+| Upper-Body Joint Control Mode | The SDK controls the waist and both arms through `/JOINTS_CMD`; the robot's internal policy controls the leg joints | [Low-level examples](EXAMPLES.md#1-low-level-examples) |
 
-### Usage Notes
+### 1.1 Usage Notes
 
 - Before entering Developer Mode, confirm that the robot is in the idle state.
 - After entering Developer Mode, perception, localization, and obstacle-avoidance functions are disabled. Do not rely on these functions to ensure motion safety.
@@ -25,7 +25,7 @@ Developer Mode grants the SDK access to the robot's motion-control capabilities.
 
 See the [State Machine](STATE_MACHINE.md) document for its required mode and [Topic Examples](EXAMPLES.md) for the mode required by each example.
 
-## Switching Methods
+## 2. Switching Methods
 
 1. **Switch with the gamepad:** Configure and enter Developer Mode through the gamepad for the normal real-robot operation flow.
 2. **Switch with the SDK example:** Run `developer_mode_example` to switch modes through the `/DEVELOPER_MODE` service and related state Topics.
@@ -34,11 +34,11 @@ These methods are independent. Do not operate both at the same time.
 
 <a id="handle-switching"></a>
 
-## Switch with the Gamepad
+## 3. Switch with the Gamepad
 
 On the gamepad, open Settings - Auxiliary Functions - Developer Mode Settings, enable Developer Mode, and select the target control mode. The selection is retained; when the target mode does not change, it does not need to be configured again. After configuring the mode, follow the corresponding procedure below from the gamepad main screen to enter it.
 
-### High-Level Motion Control Mode
+### 3.1 High-Level Motion Control Mode
 
 - Enter:
   1. Confirm that the robot is in the idle state.
@@ -50,7 +50,7 @@ On the gamepad, open Settings - Auxiliary Functions - Developer Mode Settings, e
   3. Select Exit Development on the gamepad main screen.
   4. After confirming that the robot is in the idle state, use the entry in the upper-left corner of the main screen to exit Developer Mode.
 
-### Whole-Body Joint Control Mode
+### 3.2 Whole-Body Joint Control Mode
 
 - Enter:
   1. Confirm that the robot is in the idle state.
@@ -61,7 +61,7 @@ On the gamepad, open Settings - Auxiliary Functions - Developer Mode Settings, e
   2. Select Exit Development on the gamepad main screen.
   3. Switch the robot back to the idle state, then use the entry in the upper-left corner of the main screen to exit Developer Mode.
 
-### Upper-Body Joint Control Mode
+### 3.3 Upper-Body Joint Control Mode
 
 - Enter:
   1. Confirm that the robot is in the idle state.
@@ -76,7 +76,7 @@ On the gamepad, open Settings - Auxiliary Functions - Developer Mode Settings, e
 
 <a id="sdk-example-switching"></a>
 
-## Switch with the SDK Example
+## 4. Switch with the SDK Example
 
 `developer_mode_example` enters or exits real-robot Developer Mode and asks for confirmation before potentially dangerous operations.
 
@@ -99,7 +99,7 @@ Arguments:
 - `exit`: perform a normal exit for the current control mode. In Upper-Body Joint Control Mode, return to `RLControl` before continuing the exit; if the robot is already in `Idle`, skip the damping transition.
 - `damping_exit`: quickly exit the current control. It can be used during normal operation or an abnormal condition. When the robot is not in `Idle`, it enters the damping state first and may lose active support; when already in `Idle`, the damping transition is skipped.
 
-### Service Interface
+### 4.1 Service Interface
 
 `/DEVELOPER_MODE` switches Developer Mode.
 
@@ -137,6 +137,6 @@ The `command` field uses the following JSON format:
 
 `Enabled` indicates whether Developer Mode access is enabled, `Mode` indicates the current control mode, and `Frequency` indicates the current joint-control data frequency. High-Level Motion Control Mode does not include `Frequency`. The example uses this status to confirm whether service operations took effect.
 
-## Emergency Stop
+## 5. Emergency Stop
 
 If an abnormal condition occurs or control must be stopped immediately, press the red stop button on the gamepad first. After the robot returns to a stable state, confirm that the SDK program and its control Topic publishers have stopped, then exit Developer Mode.

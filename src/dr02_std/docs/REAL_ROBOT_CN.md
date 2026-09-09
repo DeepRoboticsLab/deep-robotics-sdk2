@@ -4,18 +4,18 @@
 
 本文档说明控制 DR02 Std 实机时的 SDK 环境、运行位置和部署与编译流程。SDK 可以在开发主机或 AOS 主机（`10.21.33.103`）上运行；AOS 主机是机器人端计算设备。只要 ROS/DDS 网络互通，这些设备均可能直接控制实机。
 
-## 使用流程
+## 1. 使用流程
 
 1. 选择 SDK 运行位置，完成网络、环境、代码部署和编译。
 2. 根据目标程序阅读[开发者模式文档](DEVELOPER_MODE_CN.md)，选择手柄或 SDK 示例切换方式并进入对应模式。
 3. 在运行设备上启动程序。
 4. 正常结束时先停止程序，再退出开发者模式；发生异常时使用手柄红色停止按钮。
 
-## 环境与网络准备
+## 2. 环境与网络准备
 
 SDK 依赖 ROS 2、[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库。[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 的 ROS 2 包名为 `drdds`。
 
-消息接口库支持 deb 安装和源码编译两种方式，Ubuntu 22.04/24.04（amd64/arm64）可按[安装消息接口](../../../README_CN.md#安装消息接口)自动安装 deb 包。手动安装或源码编译步骤请参阅 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 文档。通过 deb 安装时，加载 ROS 2 环境即可；通过源码编译时，还应加载消息接口库工作空间的 `install/setup.bash`。本文后续命令仅展示 ROS 2 环境加载。
+消息接口库支持 deb 安装和源码编译两种方式，Ubuntu 22.04/24.04（amd64/arm64）可按[安装消息接口](../../../README_CN.md#4-安装消息接口)自动安装 deb 包。手动安装或源码编译步骤请参阅 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 文档。通过 deb 安装时，加载 ROS 2 环境即可；通过源码编译时，还应加载消息接口库工作空间的 `install/setup.bash`。本文后续命令仅展示 ROS 2 环境加载。
 
 | 运行位置 | IP 地址 | 环境状态 | 准备方式 |
 | --- | --- | --- | --- |
@@ -26,9 +26,9 @@ SDK 依赖 ROS 2、[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-r
 
 机器人 WiFi 密码与 SSH 登录密码不同。WiFi 名称、WiFi 密码和 SSH 密码均以交付资料或技术支持提供的信息为准。
 
-## 部署与编译
+## 3. 部署与编译
 
-### 在开发主机部署与编译
+### 3.1 在开发主机部署与编译
 
 SDK 直接在开发主机上运行并控制实机时，开发主机必须通过网线连接机器人背部网口。
 
@@ -56,7 +56,7 @@ SDK 直接在开发主机上运行并控制实机时，开发主机必须通过�
 >
 > `ping` 成功仅表示 IP 网络连通。运行 SDK 前，还应确认 `ros2 topic list` 能够发现机器人 Topic。
 
-### 在 AOS 主机（10.21.33.103）部署与编译
+### 3.2 在 AOS 主机（10.21.33.103）部署与编译
 
 AOS 使用 Ubuntu 24.04、ROS 2 Jazzy 和 ARM64 架构，无法访问互联网。
 
@@ -85,7 +85,7 @@ colcon build --packages-up-to dr02_std --cmake-args -DBUILD_PLATFORM=arm
 安装即可。仅安装生成的 deb 包时使用 sudo，原始源码保持不变，临时编译文件自动清理。
 安装后无需额外加载消息工作空间。SDK 与 AOS 应使用匹配的消息接口版本。
 
-### 部署与编译说明
+### 3.3 部署与编译说明
 
 > [!NOTE]
 >
@@ -96,6 +96,6 @@ colcon build --packages-up-to dr02_std --cmake-args -DBUILD_PLATFORM=arm
 >
 > 实机编译和控制不得启用 `BUILD_SIM=ON`。
 
-## 开发者模式
+## 4. 开发者模式
 
 开发者模式的用途、三种模式的控制范围，以及通过手柄或 SDK 示例切换模式的方法，统一参阅[开发者模式文档](DEVELOPER_MODE_CN.md)。

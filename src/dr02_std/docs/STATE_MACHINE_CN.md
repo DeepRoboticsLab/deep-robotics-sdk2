@@ -4,9 +4,9 @@
 
 DR02 Std 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，并在 RL 控制状态下接收 `/STEER` 和 `/REAL_STEER`。
 
-## 运行方式
+## 1. 运行方式
 
-### 实机控制
+### 1.1 实机控制
 
 实机运行前，请先完成[实机部署](REAL_ROBOT_CN.md)，并按照[开发者模式文档](DEVELOPER_MODE_CN.md#handle-switching)进入全身关节控制模式。
 
@@ -20,18 +20,18 @@ DR02 Std 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，并在 RL 控�
 >
 > 状态机运行期间，不得同时运行其他 `/JOINTS_CMD` 发布者。
 
-### 仿真运行
+### 1.2 仿真运行
 
 状态机支持配合 MuJoCo 仿真运行。SDK 侧编译和运行方式请参阅[仿真环境与运行](SIMULATION_CN.md)。
 
-## 启动状态机
+## 2. 启动状态机
 
 ```bash
 source install/setup.bash
 ros2 run dr02_std state_machine
 ```
 
-## 状态流转
+## 3. 状态流转
 
 ```text
 Idle -> ZeroPos -> RLControl
@@ -42,7 +42,7 @@ Idle -> ZeroPos -> RLControl
 - `RLControl`：运行 RL policy，并接收 `/STEER` 和 `/REAL_STEER`。
 - `JointDamping`：RL 控制和安全处理使用的阻尼状态。
 
-## 键盘控制
+## 4. 键盘控制
 
 - `z`：进入 `ZeroPos`
 - `c`：从 `ZeroPos` 进入 `RLControl`
@@ -51,7 +51,7 @@ Idle -> ZeroPos -> RLControl
 - `a/d`：RL 控制下左移 / 右移
 - `q/e`：RL 控制下左转 / 右转
 
-## 手柄控制
+## 5. 手柄控制
 
 - L1：进入 `ZeroPos`
 - L2：从 `ZeroPos` 进入 `RLControl`
@@ -59,7 +59,7 @@ Idle -> ZeroPos -> RLControl
 - 左摇杆：前进 / 左移 / 后退 / 右移命令
 - 右摇杆：转向命令
 
-## 安全要求
+## 6. 安全要求
 
 > [!WARNING]
 >

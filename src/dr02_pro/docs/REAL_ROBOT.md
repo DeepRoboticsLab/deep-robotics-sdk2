@@ -4,18 +4,18 @@
 
 This document describes the SDK environment, runtime locations, and deployment and build process used to control a DR02 Pro robot. The SDK can run on a development host, the AOS host (`10.21.33.103`), or the NOS host (`10.21.33.106`). The AOS and NOS hosts are robot-side computers. Any of these devices may directly control the robot when ROS/DDS network communication is available.
 
-## Workflow
+## 1. Workflow
 
 1. Select the SDK runtime location, then complete network setup, environment preparation, code deployment, and compilation.
 2. Read the [Developer Modes](DEVELOPER_MODE.md) document and use either the gamepad or SDK example to enter the required mode.
 3. Start the program on the selected runtime device.
 4. For a normal shutdown, stop the program before exiting Developer Mode. If an abnormal condition occurs, use the red stop button on the gamepad.
 
-## Environment and Network Preparation
+## 2. Environment and Network Preparation
 
 The SDK depends on ROS 2 and the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package. The ROS 2 package name provided by [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) is `drdds`.
 
-The message interface package supports deb installation and source builds. For automatic deb installation on Ubuntu 22.04/24.04 (amd64/arm64), follow [Install the Message Interfaces](../../../README.md#install-the-message-interfaces). See the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) documentation for manual installation or source builds. With a deb installation, loading the ROS 2 environment is sufficient. With a source build, the message interface workspace `install/setup.bash` must also be loaded. The commands below show only the ROS 2 environment setup.
+The message interface package supports deb installation and source builds. For automatic deb installation on Ubuntu 22.04/24.04 (amd64/arm64), follow [Install the Message Interfaces](../../../README.md#4-install-the-message-interfaces). See the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) documentation for manual installation or source builds. With a deb installation, loading the ROS 2 environment is sufficient. With a source build, the message interface workspace `install/setup.bash` must also be loaded. The commands below show only the ROS 2 environment setup.
 
 | Runtime Location | IP Address | Environment Status | Preparation |
 | --- | --- | --- | --- |
@@ -27,9 +27,9 @@ To connect to the AOS host or NOS host, use either the robot WiFi network or an 
 
 The robot WiFi password and SSH login password are different. Refer to the delivery materials or information provided by technical support for the WiFi SSID, WiFi password, and SSH password.
 
-## Deployment and Build
+## 3. Deployment and Build
 
-### Development Host
+### 3.1 Development Host
 
 When the SDK runs on a development host to control the real robot, the host must connect to the network port on the rear of the robot through Ethernet.
 
@@ -57,7 +57,7 @@ When the SDK runs on a development host to control the real robot, the host must
 >
 > A successful `ping` confirms only IP network connectivity. Before running the SDK, also confirm that `ros2 topic list` can discover robot Topics.
 
-### AOS Host (10.21.33.103)
+### 3.2 AOS Host (10.21.33.103)
 
 The AOS runs Ubuntu 24.04 and ROS 2 Jazzy on ARM64 and has no internet access.
 
@@ -92,7 +92,7 @@ install the built Debian package. Supplied sources are preserved and temporary
 build files are cleaned up. No separate message workspace needs to be sourced.
 Use matching message interface versions on the SDK and AOS hosts.
 
-### NOS Host (10.21.33.106)
+### 3.3 NOS Host (10.21.33.106)
 
 The NOS runs Ubuntu 22.04 and ROS 2 Humble on ARM64 and has no internet access.
 
@@ -111,7 +111,7 @@ cd ~/deep-robotics-sdk2
 colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
 ```
 
-### Deployment and Build Notes
+### 3.4 Deployment and Build Notes
 
 > [!NOTE]
 >
@@ -122,6 +122,6 @@ colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
 >
 > Do not enable `BUILD_SIM=ON` when building or controlling the real robot.
 
-## Developer Modes
+## 4. Developer Modes
 
 The purpose, control scopes, and gamepad or SDK example switching procedures for Developer Mode are described in [Developer Modes](DEVELOPER_MODE.md).

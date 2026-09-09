@@ -4,13 +4,13 @@
 
 This document describes the message fields, units, array order, and controllable ranges used by the DR02 Pro low-level joint examples.
 
-## Message Structure
+## 1. Message Structure
 
 `/JOINTS_DATA` publishes joint feedback with `Joints`, and `/JOINTS_CMD` publishes joint commands with `JointsCmd`. In both messages, `data[i]` identifies a joint by its array index `i`; `data_id` is not the joint index.
 
 In the message header, `header.stamp` is the message generation time and `header.frame_id` is the publisher frame sequence number.
 
-## Feedback Message: `/JOINTS_DATA`
+## 2. Feedback Message: `/JOINTS_DATA`
 
 | Field | Meaning | Unit or description |
 | --- | --- | --- |
@@ -23,7 +23,7 @@ In the message header, `header.stamp` is the message generation time and `header
 | `motion_temp` | Motor temperature | `°C` |
 | `driver_temp` | Driver temperature | `°C` |
 
-## Command Message: `/JOINTS_CMD`
+## 3. Command Message: `/JOINTS_CMD`
 
 | Field | Meaning | Unit or description |
 | --- | --- | --- |
@@ -36,7 +36,7 @@ In the message header, `header.stamp` is the message generation time and `header
 | `kp` | Position gain | `N·m/rad` |
 | `kd` | Velocity gain | `N·m·s/rad` |
 
-## Joint Array Order
+## 4. Joint Array Order
 
 `/JOINTS_DATA` and `/JOINTS_CMD` use the following 31-joint order:
 
@@ -49,7 +49,7 @@ In the message header, `header.stamp` is the message generation time and `header
 | `23-28` | Right leg | `23 right_hip_y_joint`, `24 right_hip_x_joint`, `25 right_hip_z_joint`, `26 right_knee_joint`, `27 right_ankle_y_joint`, `28 right_ankle_x_joint` |
 | `29-30` | Neck | `29 neck_z_joint`, `30 neck_y_joint` |
 
-## Control Ranges and Zero Position
+## 5. Control Ranges and Zero Position
 
 - Whole-Body Joint Control Mode: controllable indices are `0-30`.
 - Upper-Body Joint Control Mode: controllable indices are `0-16`, covering the waist and both arms.

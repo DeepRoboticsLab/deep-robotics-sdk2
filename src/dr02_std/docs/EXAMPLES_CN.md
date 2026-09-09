@@ -17,7 +17,7 @@ ros2 run dr02_std <example_name> [args]
 >
 > 上半身关节控制示例必须在上半身关节控制模式下运行。若在全身关节控制模式下运行，腿部关节可能因未获得有效控制指令而失去支撑，导致机器人跌倒。
 
-## 低层示例
+## 1. 低层示例
 
 | 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
@@ -36,11 +36,11 @@ ros2 run dr02_std <example_name> [args]
 | `3` | `salute` |
 | `4` | `salute2` |
 
-### 关节接口
+### 1.1 关节接口
 
 关节消息字段、单位、数组顺序、可控范围和零位说明参阅[关节控制接口](JOINT_CONTROL_CN.md)。
 
-## 高层示例
+## 2. 高层示例
 
 | 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ ros2 run dr02_std <example_name> [args]
 > - `/STEER` 的 `x`、`y` 和 `yaw` 是 `[-1.0, 1.0]` 的归一化比例，不是实际速度；示例固定使用 `0.6`，实际速度由机器人状态、步态和控制策略决定。
 > - 请持续按住按键；松开后约 `320 ms` 归零。机器人可能调整姿态或产生倾斜，实机测试时应在空旷环境中一次只测试一个方向键。本示例仅用于 Topic 验证，不用于性能或最大速度测试。
 
-### 1. `motion_state_example` 参数
+### 2.1 `motion_state_example` 参数
 
 | 数值 | 名称 | 说明 |
 | --- | --- | --- |
@@ -68,14 +68,14 @@ ros2 run dr02_std <example_name> [args]
 | `0x11` | `RLControl` | RL 控制状态。 |
 | `0x20006` | `SuspendedStand` | 悬吊起立完成；将机器人放下并确认双脚接触地面后，方可进入 `RLControl`。 |
 
-### 2. `gait_example` 参数
+### 2.2 `gait_example` 参数
 
 | 数值 | 名称 | 说明 |
 | --- | --- | --- |
 | `0x21001` | `HumanWALKAMP` | 仿人走路。 |
 | `0x21006` | `HumanWALKTERRAIN` | 复杂地形走路。 |
 
-### 3. `action_example` 参数
+### 2.3 `action_example` 参数
 
 | ID | 名称 | 说明 |
 | --- | --- | --- |
@@ -86,14 +86,14 @@ ros2 run dr02_std <example_name> [args]
 | `0x3004` | `salute2` | 第二种敬礼动作。 |
 | `0x3008` | `prepare_idle` | 返回准备姿态。 |
 
-## 状态监测示例
+## 3. 状态监测示例
 
 | 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
 | `battery_state_example` | `/BATTERY_DATA` | 任意 | 不支持 | `ros2 run dr02_std battery_state_example` | 打印电量、电压、电流和保护状态。 |
 | `fault_snapshot_example` | `/fault_aggregator` | 任意 | 不支持 | `ros2 run dr02_std fault_snapshot_example` | 订阅 `drdds/msg/FaultEventArray` 并打印当前故障快照。 |
 
-### 当前故障快照
+### 3.1 当前故障快照
 
 `/fault_aggregator` 采用状态变化触发和周期两种上报方式：故障出现时立即发布一次当前活动故障快照，故障状态发生其他变化时也会触发发布，同时按周期持续发布。重复收到相同内容不表示故障重复发生；`active_faults` 为空表示当前没有活动故障。
 
@@ -108,14 +108,14 @@ ros2 run dr02_std <example_name> [args]
 
 严重级别从低到高依次为 `DEBUG(0)`、`INFO(1)`、`NOTICE(2)`、`WARN(3)`、`ERROR(4)`、`CRITICAL(5)`、`ALERT(6)` 和 `EMERG(7)`，具体保护和处置方式由产品定义。示例会跳过内容未变化的周期快照，避免重复输出；消息中的其他字段用于内部故障诊断，不在示例中展示。
 
-## 外设示例
+## 4. 外设示例
 
 | 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
 | `imu_example` | `/IMU_DATA_BASE` | 任意 | 不支持 | `ros2 run dr02_std imu_example` | 订阅 `sensor_msgs/msg/Imu`，打印基座 IMU 的四元数、角速度和线加速度。 |
 | `gamepad_key_example` | `/GAMEPAD_KEY` | 任意 | 不支持 | `ros2 run dr02_std gamepad_key_example` | 打印手柄按键事件。 |
 
-## 音频示例
+## 5. 音频示例
 
 音频示例播放机器人端音频目录中已经存在的 WAV 文件。先将文件拷贝到 `/var/opt/robot/data/audio/`，再通过 `/AUDIO/PLAY_FILE` 发布文件名触发播放。
 

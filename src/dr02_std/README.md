@@ -6,7 +6,7 @@ This ROS 2 package provides the DR02 Std motion-control state machine and standa
 
 The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without internet access. See [Real-Robot Deployment](docs/REAL_ROBOT.md) for offline message installation and source transfer.
 
-## Features
+## 1. Features
 
 - DR02 Std RL state-machine control
 - Low-level joint state, joint command, and upper-body control examples
@@ -15,7 +15,7 @@ The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without intern
 - Peripheral Topic examples for IMU and gamepad keys
 - Audio examples for WAV playback, volume control, and recording
 
-## Directory Layout
+## 2. Directory Layout
 
 - `state_machine/`: main DR02 Std state-machine program
 - `low_level/`: low-level joint and upper-body control Topic examples
@@ -25,7 +25,7 @@ The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without intern
 - `audio/`: WAV playback, volume control, and recording examples
 - `docs/`: real-robot deployment, Developer Mode, simulation, state-machine, and example documentation
 
-## Documentation
+## 3. Documentation
 
 | Document | Contents |
 | --- | --- |
@@ -36,7 +36,7 @@ The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without intern
 | [Topic Examples](docs/EXAMPLES.md) | Topics, real-robot Developer Modes, simulation support, runtime commands, and notes for all examples |
 | [Joint Control Interface](docs/JOINT_CONTROL.md) | Joint message fields, array order, controllable ranges, units, and zero-position definition |
 
-## Quick Start
+## 4. Quick Start
 
 For the first run, select the environment setup document according to the control target, then follow the links in the next-step column for the required mode and examples.
 
@@ -49,7 +49,7 @@ For the first run, select the environment setup document according to the contro
 >
 > The SDK runtime location and control target are independent concepts. If ROS/DDS network communication is available, an SDK process running on a development host or the AOS host (`10.21.33.103`) may directly control the real robot.
 
-## Important Safety Information
+## 5. Important Safety Information
 
 > [!WARNING]
 >
@@ -59,7 +59,7 @@ For the first run, select the environment setup document according to the contro
 > - Only one `/JOINTS_CMD` publisher may run at a time.
 > - If an abnormal condition occurs, use the red stop button on the gamepad to stop control immediately.
 
-## Build Options
+## 6. Build Options
 
 | Option | Default | Description |
 | --- | --- | --- |

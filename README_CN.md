@@ -4,14 +4,14 @@
 
 DEEPRobotics SDK 提供面向已支持 DEEPRobotics 产品的 ROS 2 软件包和 Topic 示例。产品专属的部署、运行模式、状态机和示例说明由对应产品目录维护。
 
-## 产品列表
+## 1. 产品列表
 
 | 产品 | ROS 2 软件包 | 产品文档 |
 | --- | --- | --- |
 | DR02 Pro | `dr02_pro` | [English](src/dr02_pro/README.md) / [中文](src/dr02_pro/README_CN.md) |
 | DR02 Std | `dr02_std` | [English](src/dr02_std/README.md) / [中文](src/dr02_std/README_CN.md) |
 
-## 仓库结构
+## 2. 仓库结构
 
 ```text
 scripts/          依赖安装脚本
@@ -20,7 +20,7 @@ src/<product>/    产品专属 ROS 2 软件包、部署说明和使用文档
 third_party/      第三方源码和集成文件
 ```
 
-## 机器人主机
+## 3. 机器人主机
 
 | 主机 | 地址 | Ubuntu | ROS 2 | 架构 | 互联网 |
 | --- | --- | --- | --- | --- | --- |
@@ -30,7 +30,7 @@ third_party/      第三方源码和集成文件
 请在可联网的开发电脑上下载源码，通过机器人局域网传输，再在目标主机上针对其
 ROS 版本原生编译。具体传输和 SDK 编译命令见对应产品的实机部署文档。
 
-## 安装消息接口
+## 4. 安装消息接口
 
 脚本检查依赖，下载 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git)，
 然后编译并安装其 deb 包。缺少依赖时仅报错，不会安装依赖。目标主机需已具备 ROS 2、
@@ -60,7 +60,7 @@ NOS 已预装 `drdds`，加载 `/opt/ros/humble/setup.bash` 即可。安装后�
 可选参数：`--ref <标签或提交>` 指定下载版本（默认 `main`），`--jobs N` 设置编译
 并行数（默认 2）。`--ref` 不可与 `--source-dir` 同时使用，完整用法见 `--help`。
 
-## 相关仓库
+## 5. 相关仓库
 
 - [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git)：SDK 使用的 ROS 2 消息接口库，ROS 2 包名为 `drdds`。
 - [deep-robotics-simulation](https://github.com/DeepRoboticsLab/deep-robotics-simulation)：DEEPRobotics 产品的 MuJoCo 仿真环境。

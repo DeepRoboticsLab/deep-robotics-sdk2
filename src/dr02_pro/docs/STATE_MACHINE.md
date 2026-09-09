@@ -4,9 +4,9 @@
 
 The DR02 Pro state machine subscribes to `/JOINTS_DATA`, publishes `/JOINTS_CMD`, and receives `/STEER` and `/REAL_STEER` while in the RL control state.
 
-## Operation
+## 1. Operation
 
-### Real-Robot Control
+### 1.1 Real-Robot Control
 
 Before running on the real robot, complete [Real-Robot Deployment](REAL_ROBOT.md) and follow the [Developer Modes](DEVELOPER_MODE.md#handle-switching) procedure to enter Whole-Body Joint Control Mode.
 
@@ -20,18 +20,18 @@ Before running on the real robot, complete [Real-Robot Deployment](REAL_ROBOT.md
 >
 > Do not run another `/JOINTS_CMD` publisher while the state machine is running.
 
-### Simulation
+### 1.2 Simulation
 
 The state machine supports operation with the MuJoCo simulation. See [Simulation Environment and Operation](SIMULATION.md) for SDK-side build and runtime instructions.
 
-## Start the State Machine
+## 2. Start the State Machine
 
 ```bash
 source install/setup.bash
 ros2 run dr02_pro state_machine
 ```
 
-## State Transitions
+## 3. State Transitions
 
 ```text
 Idle -> ZeroPos -> RLControl
@@ -42,7 +42,7 @@ Idle -> ZeroPos -> RLControl
 - `RLControl`: runs the RL policy and receives `/STEER` and `/REAL_STEER`.
 - `JointDamping`: damping state used by RL control and safety handling.
 
-## Keyboard Control
+## 4. Keyboard Control
 
 - `z`: enter `ZeroPos`
 - `c`: enter `RLControl` from `ZeroPos`
@@ -51,7 +51,7 @@ Idle -> ZeroPos -> RLControl
 - `a/d`: move left / right in RL control
 - `q/e`: turn left / right in RL control
 
-## Gamepad Control
+## 5. Gamepad Control
 
 - L1: enter `ZeroPos`
 - L2: enter `RLControl` from `ZeroPos`
@@ -59,7 +59,7 @@ Idle -> ZeroPos -> RLControl
 - Left joystick: forward / left / backward / right command
 - Right joystick: turning command
 
-## Safety Requirements
+## 6. Safety Requirements
 
 > [!WARNING]
 >
