@@ -20,34 +20,50 @@ src/<product>/    Product-specific ROS 2 packages, deployment instructions, and 
 third_party/      Third-party source and integration files
 ```
 
+## Robot Hosts
+
+| Host | Address | Ubuntu | ROS 2 | Architecture | Internet |
+| --- | --- | --- | --- | --- | --- |
+| AOS | `10.21.33.103` | 24.04 | Jazzy | ARM64 (`arm64`) | None |
+| NOS (DR02 Pro) | `10.21.33.106` | 22.04 | Humble | ARM64 (`arm64`) | None |
+
+Download sources on an internet-connected development computer and transfer them
+through the robot's local network. Build natively on the target host for its ROS
+version. See the product's real-robot guide for the transfer and SDK build commands.
+
 ## Install the Message Interfaces
 
-With ROS 2 and its apt repository already configured, run from the SDK root:
+The script checks dependencies, downloads [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git),
+and builds and installs its Debian package. Missing dependencies are reported;
+the script does not install them. ROS 2, a compiler, CMake/CPack, colcon, and the
+required ROS message-generation packages must already be present.
+
+On an internet-connected development host, run from the SDK root:
 
 ```bash
 ./scripts/install_deep_robotics_msg.sh
 ```
 
-The script selects Humble on Ubuntu 22.04 or Jazzy on Ubuntu 24.04 and supports
-native x86-64 (`amd64`) and 64-bit ARM (`arm64`) builds. It installs build
-dependencies with apt, downloads [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git),
-builds and installs its Debian package into `/opt/ros/<distro>`, and verifies the
-`drdds` interfaces. It uses sudo for system installation. Temporary downloads
-and build files are removed on success or failure; shell startup files are not edited.
+On the AOS, use the source already transferred from your development computer:
 
 ```bash
-source /opt/ros/humble/setup.bash  # Ubuntu 22.04; use jazzy on Ubuntu 24.04
+cd ~/deep-robotics-sdk2
+./scripts/install_deep_robotics_msg.sh --source-dir ~/deep-robotics-msg
+source /opt/ros/jazzy/setup.bash
 ```
 
-Run this source command in each terminal before following the product build/run
-instructions. No separate message workspace needs to be sourced. Hosts with
-`drdds` already preinstalled (such as NOS) can skip this step. Running the script
-again rebuilds and reinstalls the selected upstream revision.
+`--source-dir` skips downloading and requires no internet connection. The script
+never runs apt. It builds a temporary copy, preserves the supplied source, and
+removes temporary files when finished. Sudo is used only to install the built package.
 
-The default source is upstream `main`. Use `--ref <tag-or-full-commit-SHA>` for a
-repeatable version and `--jobs N` to adjust compiler parallelism (default: 2, to
-limit memory use on ARM hosts). See `--help` for all options. ROS 2 itself is not
-installed by this script.
+Ubuntu 24.04 selects Jazzy; Ubuntu 22.04 selects Humble. Both amd64 and arm64 are
+supported. The NOS already has `drdds` installed; source `/opt/ros/humble/setup.bash`
+there. After installation, each new terminal needs only the matching ROS setup;
+no separate message workspace is required.
+
+Optional: `--ref <tag-or-commit>` selects the downloaded revision (default: `main`);
+`--jobs N` sets compiler parallelism (default: 2). `--ref` cannot be combined with
+`--source-dir`. See `--help` for usage.
 
 ## Related Repositories
 

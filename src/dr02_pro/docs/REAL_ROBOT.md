@@ -20,8 +20,8 @@ The message interface package supports deb installation and source builds. For a
 | Runtime Location | IP Address | Environment Status | Preparation |
 | --- | --- | --- | --- |
 | Development host | Depends on the user's network configuration | Ubuntu 22.04 or Ubuntu 24.04 is recommended | Install the corresponding ROS 2 distribution and install or build the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package from source |
-| AOS host | `10.21.33.103` | The message interface package must be installed | Install the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package and load the ROS 2 and message interface environments |
-| NOS host | `10.21.33.106` | The message interface package is preinstalled | No separate message interface package installation is required |
+| AOS host | `10.21.33.103` | Ubuntu 24.04 / Jazzy; ARM64; no internet | Install the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package and load the ROS 2 and message interface environments |
+| NOS host | `10.21.33.106` | Ubuntu 22.04 / Humble; ARM64; no internet; messages preinstalled | No separate message interface package installation is required |
 
 To connect to the AOS host or NOS host, use either the robot WiFi network or an Ethernet cable connected to the network port on the rear of the robot. After network connectivity is established, log in to the target device through SSH.
 
@@ -59,22 +59,42 @@ When the SDK runs on a development host to control the real robot, the host must
 
 ### AOS Host (10.21.33.103)
 
-Access the AOS host through the robot WiFi network or the network port on the rear of the robot. From the directory containing `deep-robotics-sdk2`, run the following command to transfer the source code to the AOS host:
+The AOS runs Ubuntu 24.04 and ROS 2 Jazzy on ARM64 and has no internet access.
+
+Access the AOS host through the robot WiFi network or the network port on the rear
+of the robot. On an internet-connected development host, from the directory containing
+`deep-robotics-sdk2`, download the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git)
+source and transfer both repositories to the AOS host. Skip `git clone` if you
+already have the required message source revision:
 
 ```bash
-scp -r deep-robotics-sdk2 user@10.21.33.103:~/
+git clone --depth 1 https://github.com/DeepRoboticsLab/deep-robotics-msg.git
+scp -r deep-robotics-sdk2 deep-robotics-msg user@10.21.33.103:~/
 ```
 
-The [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package must be installed on the AOS host. The installed ROS 2 package name is `drdds`. After logging in, load the ROS 2 and message interface environments and build the SDK:
+The message interfaces (ROS 2 package `drdds`) must be installed on the AOS host.
+Log in and use the SDK installer to build the transferred message source natively
+on the AOS and install its Debian package, then build the SDK:
 
 ```bash
 ssh user@10.21.33.103
-source /opt/ros/<ros-distro>/setup.bash
 cd ~/deep-robotics-sdk2
+./scripts/install_deep_robotics_msg.sh --source-dir ~/deep-robotics-msg
+source /opt/ros/jazzy/setup.bash
 colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
 ```
 
+`--source-dir` uses the transferred source without downloading it again. The
+script checks dependencies and reports any missing ones; it never installs
+dependencies or runs apt. The AOS already has the required build tools and ROS 2
+Jazzy environment, so it can compile and install directly. Sudo is used only to
+install the built Debian package. Supplied sources are preserved and temporary
+build files are cleaned up. No separate message workspace needs to be sourced.
+Use matching message interface versions on the SDK and AOS hosts.
+
 ### NOS Host (10.21.33.106)
+
+The NOS runs Ubuntu 22.04 and ROS 2 Humble on ARM64 and has no internet access.
 
 Access the NOS host through the robot WiFi network or the network port on the rear of the robot. From the directory containing `deep-robotics-sdk2`, run the following command to transfer the source code to the NOS host:
 
@@ -86,7 +106,7 @@ The message interface package is preinstalled on the NOS host; [deep-robotics-ms
 
 ```bash
 ssh user@10.21.33.106
-source /opt/ros/<ros-distro>/setup.bash
+source /opt/ros/humble/setup.bash
 cd ~/deep-robotics-sdk2
 colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
 ```

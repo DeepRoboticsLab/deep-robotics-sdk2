@@ -4,6 +4,8 @@ This document is the English overview of the DR02 Pro product package. For repos
 
 This ROS 2 package provides the DR02 Pro motion-control state machine and standalone Topic examples. Programs can run on a development host or robot-side device, and selected programs support validation with the MuJoCo simulation.
 
+The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without internet access. The NOS (`10.21.33.106`) runs Ubuntu 22.04 / ROS 2 Humble, also on ARM64 without internet access. See [Real-Robot Deployment](docs/REAL_ROBOT.md) for offline message installation and source transfer.
+
 ## Features
 
 - DR02 Pro RL state-machine control

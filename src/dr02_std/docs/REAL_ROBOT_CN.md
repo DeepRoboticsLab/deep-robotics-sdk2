@@ -20,7 +20,7 @@ SDK 依赖 ROS 2、[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-r
 | 运行位置 | IP 地址 | 环境状态 | 准备方式 |
 | --- | --- | --- | --- |
 | 开发主机 | 根据用户网络配置 | 建议使用 Ubuntu 22.04 或 Ubuntu 24.04 | 安装对应版本的 ROS 2，并安装或源码编译 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库 |
-| AOS 主机 | `10.21.33.103` | 需安装消息接口库 | 安装 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库，并加载 ROS 2 和消息接口库环境 |
+| AOS 主机 | `10.21.33.103` | Ubuntu 24.04 / Jazzy；ARM64；无互联网 | 安装 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库，并加载 ROS 2 和消息接口库环境 |
 
 连接 AOS 主机时，可以使用机器人 WiFi，也可以将网线插入机器人背部网口。网络连通后，通过 SSH 登录 AOS 主机。
 
@@ -58,20 +58,32 @@ SDK 直接在开发主机上运行并控制实机时，开发主机必须通过�
 
 ### 在 AOS 主机（10.21.33.103）部署与编译
 
-通过机器人 WiFi 或连接机器人背部网口访问 AOS 主机。在包含 `deep-robotics-sdk2` 目录的路径下执行以下命令将代码传输至 AOS 主机：
+AOS 使用 Ubuntu 24.04、ROS 2 Jazzy 和 ARM64 架构，无法访问互联网。
+
+通过机器人 WiFi 或连接机器人背部网口访问 AOS 主机。在可联网的开发主机上，进入包含
+`deep-robotics-sdk2` 的目录，下载 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git)
+源码，再将两个仓库一起传输至 AOS。若已有所需版本的消息源码，可跳过 `git clone`：
 
 ```bash
-scp -r deep-robotics-sdk2 user@10.21.33.103:~/
+git clone --depth 1 https://github.com/DeepRoboticsLab/deep-robotics-msg.git
+scp -r deep-robotics-sdk2 deep-robotics-msg user@10.21.33.103:~/
 ```
 
-AOS 主机需要安装 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库。安装后提供的 ROS 2 包名为 `drdds`。登录后，加载 ROS 2 和消息接口库环境并编译 SDK：
+AOS 主机必须安装消息接口库（ROS 2 包名为 `drdds`）。登录后，使用 SDK 中的安装
+脚本在 AOS 上原生编译传入的消息源码并安装 deb 包，然后编译 SDK：
 
 ```bash
 ssh user@10.21.33.103
-source /opt/ros/<ros-distro>/setup.bash
 cd ~/deep-robotics-sdk2
+./scripts/install_deep_robotics_msg.sh --source-dir ~/deep-robotics-msg
+source /opt/ros/jazzy/setup.bash
 colcon build --packages-up-to dr02_std --cmake-args -DBUILD_PLATFORM=arm
 ```
+
+`--source-dir` 使用已传入的源码，不再下载。脚本只检查依赖，缺少时报告错误，
+不安装依赖，也不执行 apt。AOS 已具备所需编译工具和 ROS 2 Jazzy 环境，直接编译
+安装即可。仅安装生成的 deb 包时使用 sudo，原始源码保持不变，临时编译文件自动清理。
+安装后无需额外加载消息工作空间。SDK 与 AOS 应使用匹配的消息接口版本。
 
 ### 部署与编译说明
 
