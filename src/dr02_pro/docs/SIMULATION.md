@@ -9,9 +9,9 @@ This document describes how to build and run the SDK side when using the DR02 Pr
 Prepare the following on the development host:
 
 - A ROS 2 environment with `ament_cmake`.
-- The [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg) message interface package installed or loaded. Its ROS 2 package name is `drdds`.
+- The [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package installed or loaded. Its ROS 2 package name is `drdds`.
 
-The message interface package supports deb installation and source builds. See the `deep-robotics-msg` documentation for detailed instructions. With a deb installation, loading the ROS 2 environment is sufficient. With a source build, the message interface workspace `install/setup.bash` must also be loaded. The commands below show only the ROS 2 environment setup.
+The message interface package supports deb installation and source builds. For automatic deb installation on Ubuntu 22.04/24.04 (amd64/arm64), follow [Install the Message Interfaces](../../../README.md#install-the-message-interfaces). See the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) documentation for manual installation or source builds. With a deb installation, loading the ROS 2 environment is sufficient. With a source build, the message interface workspace `install/setup.bash` must also be loaded. The commands below show only the ROS 2 environment setup.
 
 ```bash
 source /opt/ros/<ros-distro>/setup.bash

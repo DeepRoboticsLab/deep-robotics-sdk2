@@ -13,14 +13,14 @@
 
 ## 环境与网络准备
 
-SDK 依赖 ROS 2、[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg) 消息接口库。`deep-robotics-msg` 的 ROS 2 包名为 `drdds`。
+SDK 依赖 ROS 2、[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库。[deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 的 ROS 2 包名为 `drdds`。
 
-消息接口库支持 deb 安装和源码编译两种方式，具体步骤请参阅 `deep-robotics-msg` 文档。通过 deb 安装时，加载 ROS 2 环境即可；通过源码编译时，还应加载消息接口库工作空间的 `install/setup.bash`。本文后续命令仅展示 ROS 2 环境加载。
+消息接口库支持 deb 安装和源码编译两种方式，Ubuntu 22.04/24.04（amd64/arm64）可按[安装消息接口](../../../README_CN.md#安装消息接口)自动安装 deb 包。手动安装或源码编译步骤请参阅 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 文档。通过 deb 安装时，加载 ROS 2 环境即可；通过源码编译时，还应加载消息接口库工作空间的 `install/setup.bash`。本文后续命令仅展示 ROS 2 环境加载。
 
 | 运行位置 | IP 地址 | 环境状态 | 准备方式 |
 | --- | --- | --- | --- |
-| 开发主机 | 根据用户网络配置 | 建议使用 Ubuntu 22.04 或 Ubuntu 24.04 | 安装对应版本的 ROS 2，并安装或源码编译 `deep-robotics-msg` 消息接口库 |
-| AOS 主机 | `10.21.33.103` | 需安装消息接口库 | 安装 `deep-robotics-msg` 消息接口库，并加载 ROS 2 和消息接口库环境 |
+| 开发主机 | 根据用户网络配置 | 建议使用 Ubuntu 22.04 或 Ubuntu 24.04 | 安装对应版本的 ROS 2，并安装或源码编译 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库 |
+| AOS 主机 | `10.21.33.103` | 需安装消息接口库 | 安装 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库，并加载 ROS 2 和消息接口库环境 |
 | NOS 主机 | `10.21.33.106` | 消息接口库已预装 | 无需单独安装消息接口库 |
 
 连接 AOS 主机或 NOS 主机时，可以使用机器人 WiFi，也可以将网线插入机器人背部网口。网络连通后，通过 SSH 登录对应设备。
@@ -65,7 +65,7 @@ SDK 直接在开发主机上运行并控制实机时，开发主机必须通过�
 scp -r deep-robotics-sdk2 user@10.21.33.103:~/
 ```
 
-AOS 主机需要安装 `deep-robotics-msg` 消息接口库。安装后提供的 ROS 2 包名为 `drdds`。登录后，加载 ROS 2 和消息接口库环境并编译 SDK：
+AOS 主机需要安装 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库。安装后提供的 ROS 2 包名为 `drdds`。登录后，加载 ROS 2 和消息接口库环境并编译 SDK：
 
 ```bash
 ssh user@10.21.33.103
@@ -82,7 +82,7 @@ colcon build --packages-up-to dr02_pro --cmake-args -DBUILD_PLATFORM=arm
 scp -r deep-robotics-sdk2 user@10.21.33.106:~/
 ```
 
-NOS 主机已预装消息接口库，无需单独安装或源码编译 `deep-robotics-msg`。登录后，加载设备现有的 ROS 2 环境并编译 SDK：
+NOS 主机已预装消息接口库，无需单独安装或源码编译 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git)。登录后，加载设备现有的 ROS 2 环境并编译 SDK：
 
 ```bash
 ssh user@10.21.33.106

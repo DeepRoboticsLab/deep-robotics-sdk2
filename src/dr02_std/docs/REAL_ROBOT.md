@@ -13,14 +13,14 @@ This document describes the SDK environment, runtime locations, and deployment a
 
 ## Environment and Network Preparation
 
-The SDK depends on ROS 2 and the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg) message interface package. The ROS 2 package name provided by `deep-robotics-msg` is `drdds`.
+The SDK depends on ROS 2 and the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package. The ROS 2 package name provided by [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) is `drdds`.
 
-The message interface package supports deb installation and source builds. See the `deep-robotics-msg` documentation for detailed instructions. With a deb installation, loading the ROS 2 environment is sufficient. With a source build, the message interface workspace `install/setup.bash` must also be loaded. The commands below show only the ROS 2 environment setup.
+The message interface package supports deb installation and source builds. For automatic deb installation on Ubuntu 22.04/24.04 (amd64/arm64), follow [Install the Message Interfaces](../../../README.md#install-the-message-interfaces). See the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) documentation for manual installation or source builds. With a deb installation, loading the ROS 2 environment is sufficient. With a source build, the message interface workspace `install/setup.bash` must also be loaded. The commands below show only the ROS 2 environment setup.
 
 | Runtime Location | IP Address | Environment Status | Preparation |
 | --- | --- | --- | --- |
-| Development host | Depends on the user's network configuration | Ubuntu 22.04 or Ubuntu 24.04 is recommended | Install the corresponding ROS 2 distribution and install or build the `deep-robotics-msg` message interface package from source |
-| AOS host | `10.21.33.103` | The message interface package must be installed | Install the `deep-robotics-msg` message interface package and load the ROS 2 and message interface environments |
+| Development host | Depends on the user's network configuration | Ubuntu 22.04 or Ubuntu 24.04 is recommended | Install the corresponding ROS 2 distribution and install or build the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package from source |
+| AOS host | `10.21.33.103` | The message interface package must be installed | Install the [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package and load the ROS 2 and message interface environments |
 
 To connect to the AOS host, use either the robot WiFi network or an Ethernet cable connected to the network port on the rear of the robot. After network connectivity is established, log in to the AOS host through SSH.
 
@@ -64,7 +64,7 @@ Access the AOS host through the robot WiFi network or the network port on the re
 scp -r deep-robotics-sdk2 user@10.21.33.103:~/
 ```
 
-The `deep-robotics-msg` message interface package must be installed on the AOS host. The installed ROS 2 package name is `drdds`. After logging in, load the ROS 2 and message interface environments and build the SDK:
+The [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) message interface package must be installed on the AOS host. The installed ROS 2 package name is `drdds`. After logging in, load the ROS 2 and message interface environments and build the SDK:
 
 ```bash
 ssh user@10.21.33.103

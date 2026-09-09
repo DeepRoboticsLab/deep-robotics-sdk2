@@ -9,9 +9,9 @@
 开发主机应准备：
 
 - 带 `ament_cmake` 的 ROS 2 环境。
-- 已安装或已加载 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg) 消息接口库，其 ROS 2 包名为 `drdds`。
+- 已安装或已加载 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 消息接口库，其 ROS 2 包名为 `drdds`。
 
-消息接口库支持 deb 安装和源码编译两种方式，具体步骤请参阅 `deep-robotics-msg` 文档。通过 deb 安装时，加载 ROS 2 环境即可；通过源码编译时，还应加载消息接口库工作空间的 `install/setup.bash`。本文后续命令仅展示 ROS 2 环境加载。
+消息接口库支持 deb 安装和源码编译两种方式，Ubuntu 22.04/24.04（amd64/arm64）可按[安装消息接口](../../../README_CN.md#安装消息接口)自动安装 deb 包。手动安装或源码编译步骤请参阅 [deep-robotics-msg](https://github.com/DeepRoboticsLab/deep-robotics-msg.git) 文档。通过 deb 安装时，加载 ROS 2 环境即可；通过源码编译时，还应加载消息接口库工作空间的 `install/setup.bash`。本文后续命令仅展示 ROS 2 环境加载。
 
 ```bash
 source /opt/ros/<ros-distro>/setup.bash
