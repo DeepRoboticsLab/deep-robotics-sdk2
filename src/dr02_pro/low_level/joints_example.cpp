@@ -65,8 +65,9 @@ void PrintUsage(const char* program) {
 class JointsExample : public rclcpp::Node {
 public:
     explicit JointsExample(bool publish_cmd) : Node("joints_example"), publish_cmd_(publish_cmd) {
+        const auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).best_effort();
         joint_data_sub_ = create_subscription<drdds::msg::Joints>(
-            "/JOINTS_DATA", 10, std::bind(&JointsExample::HandleJointData, this, std::placeholders::_1));
+            "/JOINTS_DATA", qos, std::bind(&JointsExample::HandleJointData, this, std::placeholders::_1));
 
         if (publish_cmd_) {
             joint_cmd_pub_ = create_publisher<drdds::msg::JointsCmd>("/JOINTS_CMD", 10);

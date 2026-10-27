@@ -115,12 +115,17 @@ public:
      */
     virtual void Start() {
         joint_cmd_pub_ = node_->create_publisher<drdds::msg::JointsCmd>("/JOINTS_CMD", 10);
+        const auto joint_data_qos = rclcpp::QoS(rclcpp::KeepLast(1)).best_effort();
         joint_data_sub_ = node_->create_subscription<drdds::msg::Joints>(
-            "/JOINTS_DATA", 10, std::bind(&RobotInterface::HandleJointData, this, std::placeholders::_1));
+            "/JOINTS_DATA", joint_data_qos,
+            std::bind(&RobotInterface::HandleJointData, this, std::placeholders::_1));
+        const auto imu_qos = rclcpp::QoS(rclcpp::KeepLast(1)).best_effort();
         imu_data_head_sub_ = node_->create_subscription<sensor_msgs::msg::Imu>(
-            "/IMU_DATA_HEAD", 10, std::bind(&RobotInterface::HandleHeadImuData, this, std::placeholders::_1));
+            "/IMU_DATA_HEAD", imu_qos,
+            std::bind(&RobotInterface::HandleHeadImuData, this, std::placeholders::_1));
         imu_data_base_sub_ = node_->create_subscription<sensor_msgs::msg::Imu>(
-            "/IMU_DATA_BASE", 10, std::bind(&RobotInterface::HandleBaseImuData, this, std::placeholders::_1));
+            "/IMU_DATA_BASE", imu_qos,
+            std::bind(&RobotInterface::HandleBaseImuData, this, std::placeholders::_1));
         WaitDataUpdate();
     }
 

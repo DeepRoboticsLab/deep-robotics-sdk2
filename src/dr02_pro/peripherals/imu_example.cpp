@@ -17,10 +17,11 @@
 class ImuSubscriber : public rclcpp::Node {
 public:
     ImuSubscriber() : Node("imu_example") {
+        const auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).best_effort();
         head_imu_sub_ = create_subscription<sensor_msgs::msg::Imu>(
-            "/IMU_DATA_HEAD", 10, std::bind(&ImuSubscriber::HandleHeadImuData, this, std::placeholders::_1));
+            "/IMU_DATA_HEAD", qos, std::bind(&ImuSubscriber::HandleHeadImuData, this, std::placeholders::_1));
         base_imu_sub_ = create_subscription<sensor_msgs::msg::Imu>(
-            "/IMU_DATA_BASE", 10, std::bind(&ImuSubscriber::HandleBaseImuData, this, std::placeholders::_1));
+            "/IMU_DATA_BASE", qos, std::bind(&ImuSubscriber::HandleBaseImuData, this, std::placeholders::_1));
     }
 
 private:

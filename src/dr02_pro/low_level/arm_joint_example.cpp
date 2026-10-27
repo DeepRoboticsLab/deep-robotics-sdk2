@@ -54,8 +54,9 @@ class ArmJointExample : public rclcpp::Node {
 public:
     ArmJointExample() : Node("arm_joint_example") {
         joint_cmd_pub_ = create_publisher<drdds::msg::JointsCmd>("/JOINTS_CMD", 10);
+        const auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).best_effort();
         joint_data_sub_ = create_subscription<drdds::msg::Joints>(
-            "/JOINTS_DATA", 10, std::bind(&ArmJointExample::HandleJointData, this, std::placeholders::_1));
+            "/JOINTS_DATA", qos, std::bind(&ArmJointExample::HandleJointData, this, std::placeholders::_1));
         publish_timer_ = create_wall_timer(kPublishPeriod, std::bind(&ArmJointExample::PublishJointCommand, this));
 
         RCLCPP_WARN(get_logger(), "Publishing /JOINTS_CMD directly. Do not run the state machine at the same time.");
