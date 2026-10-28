@@ -13,7 +13,7 @@ AOS（`10.21.33.103`）使用 Ubuntu 24.04 / ROS 2 Jazzy，架构为 ARM64，无
 - 高层运动状态、步态、速度控制和开发者模式切换示例
 - 电池状态和当前故障快照监测示例
 - IMU 和手柄按键外设 Topic 示例
-- RealSense 深度相机部署和使用说明
+- RealSense 深度相机部署与广角 RGB 相机取流说明
 - WAV 文件播放和音量控制示例
 
 ## 2. 目录结构
@@ -35,7 +35,7 @@ AOS（`10.21.33.103`）使用 Ubuntu 24.04 / ROS 2 Jazzy，架构为 ARM64，无
 | [仿真环境与运行](docs/SIMULATION_CN.md) | SDK 仿真编译、运行方式和支持范围 |
 | [状态机](docs/STATE_MACHINE_CN.md) | 状态流转、运行命令、键盘控制、手柄控制和安全要求 |
 | [Topic 示例](docs/EXAMPLES_CN.md) | 全部示例的 Topic、实机开发者模式、仿真支持、运行命令和注意事项 |
-| [RealSense 相机](docs/CAMERA_CN.md) | NOS 主机上的相机驱动安装、ROS 2 驱动、librealsense C/C++ 接口、pyrealsense2 Python 接口、三相机启动和 Topic 验证 |
+| [相机使用](docs/CAMERA_CN.md) | RealSense 驱动部署、ROS 2 与 librealsense SDK 使用，以及广角 RGB 相机 RTSP 取流 |
 | [关节控制接口](docs/JOINT_CONTROL_CN.md) | 关节消息字段、数组顺序、可控范围、单位和零位定义 |
 
 ## 4. 快速开始
@@ -155,6 +155,7 @@ Mimic 策略需要训练时跟踪的参考动作。部署时同时提供 ONNX �
 | 查看电池、故障、IMU 或手柄事件 | [状态监测示例](docs/EXAMPLES_CN.md#3-状态监测示例)及[外设示例](docs/EXAMPLES_CN.md#4-外设示例)。运行相应订阅程序，各开发者模式均可使用，无需启动状态机。 |
 | 播放音频或调节音量 | [音频示例](docs/EXAMPLES_CN.md#5-音频示例)。先把播放文件传到机器人音频目录，再使用播放或音量示例。 |
 | 获取 RealSense 彩色、深度数据 | [相机文档](docs/CAMERA_CN.md)：在 NOS 准备驱动、识别相机、选择 ROS Topic 或 C++/Python 直接访问，再验证数据。NOS 无互联网，缺少驱动依赖时需另行离线部署。相机访问无需运行运动控制器。 |
+| 查看广角 RGB 画面 | [广角 RGB 相机](docs/CAMERA_CN.md#7-广角-rgb-相机)：在开发主机通过 RTSP 地址查看画面或获取视频。 |
 | 修改地形、场景或仿真时序 | [仿真产品文档](https://github.com/DeepRoboticsLab/deep-robotics-simulation/blob/main/dr02_pro/README_CN.md) → 其中的 `config.yaml` 和 `scene.xml`。在仿真仓库配置公共 world，重新进行 SDK 仿真验证；SDK 的 `BUILD_SIM` 不用于选择地形。 |
 
 文档支持的仿真流程包括 `state_machine` 和三个低层关节示例。高层机器人命令、模式切换服务、

@@ -1,8 +1,15 @@
-# DR02 Pro RealSense Camera Guide
+# DR02 Pro Camera Guide
 
 [Back to the DR02 Pro SDK Guide](../README.md)
 
-The DR02 Pro is equipped with three Intel RealSense D435 depth cameras that provide color and depth images for applications such as environmental perception, object recognition, and 3D vision. All three cameras connect through USB to the NOS host (`10.21.33.106`). Camera drivers and related programs should be installed and run on this device.
+The DR02 Pro is equipped with three Intel RealSense D435 depth cameras and one wide-angle RGB camera, providing color and depth data and a wide-angle video stream, respectively.
+
+| Camera | Access Method |
+| --- | --- |
+| RealSense depth cameras | Connected through USB to the NOS host (`10.21.33.106`). Run the ROS 2 driver or call the librealsense SDK on the NOS host. |
+| Wide-angle RGB camera | Read video from the RTSP URL provided by the AOS host (`10.21.33.103`). |
+
+Sections 1-6 cover the RealSense cameras. To view only the wide-angle video, go directly to [Wide-Angle RGB Camera](#7-wide-angle-rgb-camera). No RealSense driver installation is required.
 
 > [!NOTE]
 >
@@ -276,7 +283,40 @@ ros2 node list
 ros2 topic list | grep camera
 ```
 
-## 7. Official Resources
+## 7. Wide-Angle RGB Camera
+
+Connect the development host to the robot WiFi network or the network port on the rear of the robot, and ensure that the AOS host (`10.21.33.103`) is reachable. The video URL is:
+
+```text
+rtsp://10.21.33.103:8554/video1
+```
+
+Run the following commands on a development host with a graphical desktop. An SSH connection to the AOS host is not required.
+
+Install the FFmpeg tools before first use (skip this step if already installed):
+
+```bash
+sudo apt update
+sudo apt install ffmpeg
+```
+
+Use `ffplay` to receive and display the video over TCP:
+
+```bash
+ffplay -rtsp_transport tcp rtsp://10.21.33.103:8554/video1
+```
+
+Press `q` or close the player when finished.
+
+To receive video in your own program, use a video library that supports RTSP to read the same URL. This method does not depend on ROS 2 or the librealsense SDK.
+
+If playback fails, first check the network connection between the development host and the robot. Then use `ffprobe`, included with FFmpeg, to inspect the video codec, resolution, and frame rate:
+
+```bash
+ffprobe -rtsp_transport tcp -v error -show_streams rtsp://10.21.33.103:8554/video1
+```
+
+## 8. Official Resources
 
 - [RealSense ROS 2 Wrapper](https://github.com/realsenseai/realsense-ros)
 - [librealsense SDK](https://github.com/realsenseai/librealsense)

@@ -13,7 +13,7 @@ The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without intern
 - High-level motion state, gait, velocity control, and Developer Mode switching examples
 - Monitoring examples for battery state and current-fault snapshots
 - Peripheral Topic examples for IMU and gamepad keys
-- RealSense depth-camera deployment and usage documentation
+- RealSense depth-camera deployment and wide-angle RGB video access documentation
 - Audio examples for WAV playback and volume control
 
 ## 2. Directory Layout
@@ -35,7 +35,7 @@ The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without intern
 | [Simulation Environment and Operation](docs/SIMULATION.md) | SDK simulation build, runtime procedure, and supported programs |
 | [State Machine](docs/STATE_MACHINE.md) | State transitions, runtime commands, keyboard control, gamepad control, and safety requirements |
 | [Topic Examples](docs/EXAMPLES.md) | Topics, real-robot Developer Modes, simulation support, runtime commands, and notes for all examples |
-| [RealSense Cameras](docs/CAMERA.md) | Camera driver installation on the NOS host, ROS 2 driver usage, the librealsense C/C++ interface, the pyrealsense2 Python interface, three-camera startup, and Topic verification |
+| [Camera Guide](docs/CAMERA.md) | RealSense driver deployment, ROS 2 and librealsense SDK usage, and wide-angle RGB video access over RTSP |
 | [Joint Control Interface](docs/JOINT_CONTROL.md) | Joint message fields, array order, controllable ranges, units, and zero-position definition |
 
 ## 4. Quick Start
@@ -174,6 +174,7 @@ Use the mode required by each example in [Developer Modes](docs/DEVELOPER_MODE.m
 | Inspect battery, faults, IMU, or gamepad events | [Monitoring Examples](docs/EXAMPLES.md#3-monitoring-examples) and [Peripheral Examples](docs/EXAMPLES.md#4-peripheral-examples). Run the relevant subscriber; these examples work in any development mode and do not require the state machine. |
 | Play audio or set volume | [Audio Examples](docs/EXAMPLES.md#5-audio-examples). Transfer playback files to the robot's audio directory, then use the playback or volume examples. |
 | Acquire RealSense color/depth data | [Camera Guide](docs/CAMERA.md): prepare the drivers on the NOS, identify cameras, choose ROS Topics or direct C++/Python access, then verify streams. The NOS is offline, so provision driver dependencies separately if absent. Camera access does not require running a motion controller. |
+| View wide-angle RGB video | [Wide-Angle RGB Camera](docs/CAMERA.md#7-wide-angle-rgb-camera): view or receive video on the development host using the RTSP URL. |
 | Change terrain, scene, or simulator timing | [Simulator product guide](https://github.com/DeepRoboticsLab/deep-robotics-simulation/blob/main/dr02_pro/README.md) → its `config.yaml` and `scene.xml`. Configure shared worlds in the simulation repo and repeat the SDK simulation validation; the SDK's `BUILD_SIM` flag does not select terrain. |
 
 The documented simulation workflow supports `state_machine` and the three low-level

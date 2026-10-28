@@ -1,8 +1,15 @@
-# DR02 Pro RealSense 相机使用指南
+# DR02 Pro 相机使用指南
 
 [返回 DR02 Pro SDK 使用指南](../README_CN.md)
 
-DR02 Pro 配置三台 Intel RealSense D435 深度相机，可提供彩色图像和深度图像，为环境感知、目标识别和三维视觉等应用提供数据。三台相机均通过 USB 连接至 NOS 主机（`10.21.33.106`），相机驱动及相关程序应在该设备上安装和运行。
+DR02 Pro 配置三台 Intel RealSense D435 深度相机和一台广角 RGB 相机，分别提供彩色与深度数据、广角视频画面。
+
+| 相机 | 访问方式 |
+| --- | --- |
+| RealSense 深度相机 | 通过 USB 连接至 NOS 主机（`10.21.33.106`），在 NOS 主机运行 ROS 2 驱动或调用 librealsense SDK。 |
+| 广角 RGB 相机 | 通过 AOS 主机（`10.21.33.103`）提供的 RTSP 地址读取视频。 |
+
+第 1～6 节介绍 RealSense 相机。只需查看广角画面时，可直接阅读[广角 RGB 相机](#7-广角-rgb-相机)，无需安装 RealSense 驱动。
 
 > [!NOTE]
 >
@@ -277,7 +284,40 @@ ros2 node list
 ros2 topic list | grep camera
 ```
 
-## 7. 官方资源
+## 7. 广角 RGB 相机
+
+将开发主机连接至机器人 WiFi 或背部网口，确保可以访问 AOS 主机（`10.21.33.103`）。视频地址为：
+
+```text
+rtsp://10.21.33.103:8554/video1
+```
+
+以下命令均在有图形桌面的开发主机上执行，无需 SSH 登录 AOS 主机。
+
+首次使用时，安装 FFmpeg 工具（已安装可跳过）：
+
+```bash
+sudo apt update
+sudo apt install ffmpeg
+```
+
+使用 `ffplay` 通过 TCP 读取视频并查看画面：
+
+```bash
+ffplay -rtsp_transport tcp rtsp://10.21.33.103:8554/video1
+```
+
+使用完毕后按 `q` 或关闭播放器即可。
+
+需要在自己的程序中获取画面时，可使用支持 RTSP 的视频库读取同一地址。该方式不依赖 ROS 2 或 librealsense SDK。
+
+若无法播放，先检查开发主机与机器人之间的网络连接，再使用随 FFmpeg 安装的 `ffprobe` 查看视频流信息，确认编码格式、分辨率和帧率：
+
+```bash
+ffprobe -rtsp_transport tcp -v error -show_streams rtsp://10.21.33.103:8554/video1
+```
+
+## 8. 官方资源
 
 - [RealSense ROS 2 Wrapper](https://github.com/realsenseai/realsense-ros)
 - [librealsense SDK](https://github.com/realsenseai/librealsense)

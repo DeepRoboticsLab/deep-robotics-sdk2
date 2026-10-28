@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Updated the camera guide with wide-angle RGB streaming over RTSP using FFmpeg tools.
 - Removed `audio_record_example` and its documentation.
 - Updated `action_example` to use `/ACTION_COMMAND` with action IDs 30-37.
 - Renamed `action_info_example` to `action_status_example` to report action IDs, execution stages, and error codes from `/ACTION_STATUS`.
