@@ -13,7 +13,7 @@ The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without intern
 - High-level motion state, gait, velocity control, and Developer Mode switching examples
 - Monitoring examples for battery state and current-fault snapshots
 - Peripheral Topic examples for IMU and gamepad keys
-- Audio examples for WAV playback, volume control, and recording
+- Audio examples for WAV playback and volume control
 
 ## 2. Directory Layout
 
@@ -22,7 +22,7 @@ The AOS (`10.21.33.103`) runs Ubuntu 24.04 / ROS 2 Jazzy on ARM64 without intern
 - `high_level/`: high-level motion state, gait, velocity control, and Developer Mode switching examples
 - `monitoring/`: battery-state and current-fault snapshot monitoring examples
 - `peripherals/`: IMU and gamepad key peripheral examples
-- `audio/`: WAV playback, volume control, and recording examples
+- `audio/`: WAV playback and volume control examples
 - `docs/`: real-robot deployment, Developer Mode, simulation, state-machine, and example documentation
 
 ## 3. Documentation
@@ -137,7 +137,7 @@ Use the mode required by each example in [Developer Modes](docs/DEVELOPER_MODE.m
 | Use built-in walking, gait selection, or actions | [Developer Modes](docs/DEVELOPER_MODE.md) → [High-Level Examples](docs/EXAMPLES.md#2-high-level-examples). Enter High-Level Development Mode, follow `Idle -> SuspendedStand -> RLControl`, then use motion/gait/action/steering examples and their feedback. Selecting `HumanWALKAMP` invokes the robot's built-in gait; it does not load your ONNX policy. |
 | Switch Developer Mode through an application | [Developer Modes](docs/DEVELOPER_MODE.md#sdk-example-switching) → [developer_mode_example.cpp](high_level/developer_mode_example.cpp). Read the service request, confirmation, status checks, and exit procedure before integrating them. |
 | Inspect battery, faults, IMU, or gamepad events | [Monitoring Examples](docs/EXAMPLES.md#3-monitoring-examples) and [Peripheral Examples](docs/EXAMPLES.md#4-peripheral-examples). Run the relevant subscriber; these examples work in any development mode and do not require the state machine. |
-| Play audio, set volume, or record | [Audio Examples](docs/EXAMPLES.md#5-audio-examples). Transfer playback files to the robot's audio directory, then use the playback, volume, or recording examples. |
+| Play audio or set volume | [Audio Examples](docs/EXAMPLES.md#5-audio-examples). Transfer playback files to the robot's audio directory, then use the playback or volume examples. |
 | Change terrain, scene, or simulator timing | [Simulator product guide](https://github.com/DeepRoboticsLab/deep-robotics-simulation/blob/main/dr02_std/README.md) → its `config.yaml` and `scene.xml`. Configure shared worlds in the simulation repo and repeat the SDK simulation validation; the SDK's `BUILD_SIM` flag does not select terrain. |
 
 The documented simulation workflow supports `state_machine` and the three low-level

@@ -149,4 +149,3 @@ ros2 run dr02_pro audio_play_example test.wav
 | --- | --- | --- | --- | --- | --- |
 | `audio_play_example` | `/AUDIO/PLAY_FILE` | 任意 | 不支持 | `ros2 run dr02_pro audio_play_example test.wav` | 发布远程文件名触发播放。 |
 | `audio_volume_example` | `/AUDIO/VOLUME_CMD` | 任意 | 不支持 | `ros2 run dr02_pro audio_volume_example <0-100>` | 发布目标音量百分比。 |
-| `audio_record_example` | `/AUDIO/RECORD_CMD`, `/AUDIO/RECORD_STATUS` | 任意 | 不支持 | `ros2 run dr02_pro audio_record_example` | 交互式录音控制。按 `1` 开始，按 `0` 停止，按 `q` 停止并退出。录音文件保存在 `/var/opt/robot/data/audio/`；audio_node 默认强制最大录音时长 300 秒。 |

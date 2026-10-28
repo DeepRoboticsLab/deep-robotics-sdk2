@@ -149,4 +149,3 @@ ros2 run dr02_pro audio_play_example test.wav
 | --- | --- | --- | --- | --- | --- |
 | `audio_play_example` | `/AUDIO/PLAY_FILE` | Any | Not supported | `ros2 run dr02_pro audio_play_example test.wav` | Publishes a remote file name to start playback. |
 | `audio_volume_example` | `/AUDIO/VOLUME_CMD` | Any | Not supported | `ros2 run dr02_pro audio_volume_example <0-100>` | Publishes the target volume percentage. |
-| `audio_record_example` | `/AUDIO/RECORD_CMD`, `/AUDIO/RECORD_STATUS` | Any | Not supported | `ros2 run dr02_pro audio_record_example` | Interactive recording control. Press `1` to start, `0` to stop, and `q` to stop and exit. Recordings are saved in `/var/opt/robot/data/audio/`; `audio_node` enforces a default maximum recording duration of 300 seconds. |

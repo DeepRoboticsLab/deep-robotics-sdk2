@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Removed `audio_record_example` and its documentation.
 - Updated `action_example` to use `/ACTION_COMMAND` with action IDs 30-37.
 - Renamed `action_info_example` to `action_status_example` to report action IDs, execution stages, and error codes from `/ACTION_STATUS`.
 - Updated `developer_mode_example` and Developer Mode documentation with complete entry and exit workflows.

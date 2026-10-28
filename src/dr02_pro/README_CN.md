@@ -14,7 +14,7 @@ AOS（`10.21.33.103`）使用 Ubuntu 24.04 / ROS 2 Jazzy，架构为 ARM64，无
 - 电池状态和当前故障快照监测示例
 - IMU 和手柄按键外设 Topic 示例
 - RealSense 深度相机部署和使用说明
-- WAV 文件播放、音量控制和录音示例
+- WAV 文件播放和音量控制示例
 
 ## 2. 目录结构
 
@@ -23,7 +23,7 @@ AOS（`10.21.33.103`）使用 Ubuntu 24.04 / ROS 2 Jazzy，架构为 ARM64，无
 - `high_level/`：高层运动状态、步态、速度控制和开发者模式切换示例
 - `monitoring/`：电池状态和当前故障快照监测示例
 - `peripherals/`：IMU 和手柄按键外设示例
-- `audio/`：WAV 播放、音量和录音示例
+- `audio/`：WAV 播放和音量控制示例
 - `docs/`：实机部署、开发者模式、仿真运行、状态机、示例和相机说明
 
 ## 3. 文档导航
@@ -153,7 +153,7 @@ Mimic 策略需要训练时跟踪的参考动作。部署时同时提供 ONNX �
 | 使用内置行走、步态或动作 | [开发者模式](docs/DEVELOPER_MODE_CN.md) → [高层示例](docs/EXAMPLES_CN.md#2-高层示例)。进入高层开发模式，按 `Idle -> SuspendedStand -> RLControl` 操作，再使用运动状态、步态、动作、方向控制及反馈示例。选择 `HumanWALKAMP` 调用机器人内置步态，不会加载自定义 ONNX。 |
 | 在应用中切换开发者模式 | [SDK 切换步骤](docs/DEVELOPER_MODE_CN.md#sdk-example-switching) → [developer_mode_example.cpp](high_level/developer_mode_example.cpp)。接入前理解服务请求、确认、状态检查与退出流程。 |
 | 查看电池、故障、IMU 或手柄事件 | [状态监测示例](docs/EXAMPLES_CN.md#3-状态监测示例)及[外设示例](docs/EXAMPLES_CN.md#4-外设示例)。运行相应订阅程序，各开发者模式均可使用，无需启动状态机。 |
-| 播放音频、调节音量或录音 | [音频示例](docs/EXAMPLES_CN.md#5-音频示例)。先把播放文件传到机器人音频目录，再使用播放、音量或录音示例。 |
+| 播放音频或调节音量 | [音频示例](docs/EXAMPLES_CN.md#5-音频示例)。先把播放文件传到机器人音频目录，再使用播放或音量示例。 |
 | 获取 RealSense 彩色、深度数据 | [相机文档](docs/CAMERA_CN.md)：在 NOS 准备驱动、识别相机、选择 ROS Topic 或 C++/Python 直接访问，再验证数据。NOS 无互联网，缺少驱动依赖时需另行离线部署。相机访问无需运行运动控制器。 |
 | 修改地形、场景或仿真时序 | [仿真产品文档](https://github.com/DeepRoboticsLab/deep-robotics-simulation/blob/main/dr02_pro/README_CN.md) → 其中的 `config.yaml` 和 `scene.xml`。在仿真仓库配置公共 world，重新进行 SDK 仿真验证；SDK 的 `BUILD_SIM` 不用于选择地形。 |
 
