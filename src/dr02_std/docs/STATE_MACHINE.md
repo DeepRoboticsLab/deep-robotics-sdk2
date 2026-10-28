@@ -8,12 +8,12 @@ The DR02 Std state machine subscribes to `/JOINTS_DATA`, publishes `/JOINTS_CMD`
 
 ### 1.1 Real-Robot Control
 
-Before running on the real robot, complete [Real-Robot Deployment](REAL_ROBOT.md) and follow the [Developer Modes](DEVELOPER_MODE.md#handle-switching) procedure to enter Whole-Body Joint Control Mode.
+Before running on the real robot, complete [Real-Robot Deployment](REAL_ROBOT.md) and follow the [Developer Modes](DEVELOPER_MODE.md#handle-switching) procedure to enter Whole-Body Development Mode.
 
 > [!IMPORTANT]
 >
-> - The current state-machine code supports Whole-Body Joint Control Mode by default.
-> - To run in Upper-Body Joint Control Mode, modify the state-machine code according to the required control behavior.
+> - The current state-machine code supports Whole-Body Development Mode by default.
+> - To run in Upper-Body Development Mode, modify the state-machine code according to the required control behavior.
 > - Validate the modified code in the simulation environment before deploying it to the real robot.
 
 > [!WARNING]
@@ -30,6 +30,14 @@ The state machine supports operation with the MuJoCo simulation. See [Simulation
 source install/setup.bash
 ros2 run dr02_std state_machine
 ```
+
+CPU affinity is recommended on the AOS host (`10.21.33.103`):
+
+```bash
+ros2 run --prefix 'taskset -c 4-7' dr02_std state_machine
+```
+
+`4-7` selects logical CPUs 4, 5, 6, and 7. Change this range as needed.
 
 ## 3. State Transitions
 
@@ -63,7 +71,7 @@ Idle -> ZeroPos -> RLControl
 
 > [!WARNING]
 >
-> - Before running the state machine on the real robot, confirm that the robot has entered the correct Developer Mode.
+> - Before running the state machine on the real robot, confirm that the robot has entered Developer Mode and selected Whole-Body Development Mode.
 > - Before entering `ZeroPos` or `RLControl`, confirm that the robot state and surrounding motion area are safe.
 > - Before switching a real robot to `RLControl`, lower it and confirm that both feet are firmly in contact with the ground. The safety suspension may remain attached, but it must not hold the robot off the ground. Switching while suspended may cause sudden motion or loss of stability, resulting in injury or equipment damage.
 > - Only one `/JOINTS_CMD` publisher may run at a time.

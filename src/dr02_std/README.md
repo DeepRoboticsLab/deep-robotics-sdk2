@@ -74,7 +74,7 @@ For simulation, read both the [SDK simulation guide](docs/SIMULATION.md) and the
 the same ROS distribution, message version, and `ROS_DOMAIN_ID`. Set the simulator's
 `control.mode` to `whole` for the state machine or whole-body joint examples, and
 `upper` for arm examples. The simulator's `upper` mode constrains the base and legs;
-on the real robot, Upper-Body Joint Control Mode leaves the legs under the robot's
+on the real robot, Upper-Body Development Mode leaves the legs under the robot's
 internal controller. Simulation mode selection does not switch a real robot's
 Developer Mode.
 
@@ -119,7 +119,7 @@ and read [Joint Control](docs/JOINT_CONTROL.md) for the robot's command interfac
    resolved relative to the source location embedded at compilation, so retain
    the source/assets on the target; copying only the executable is insufficient.
 6. **Enter the real-robot control mode and operate.** Read
-   [Developer Modes](docs/DEVELOPER_MODE.md) to enter **Whole-Body Joint Control
+   [Developer Modes](docs/DEVELOPER_MODE.md) to enter **Whole-Body Development
    Mode**, then follow [State Machine](docs/STATE_MACHINE.md) and its safety
    requirements. Confirm foot contact before entering policy control and use
    the documented stop procedure. Revalidate any policy or controller changes
@@ -132,11 +132,11 @@ Use the mode required by each example in [Developer Modes](docs/DEVELOPER_MODE.m
 
 | Goal | Reading order and procedure |
 | --- | --- |
-| Test or implement whole-body joint commands | [Joint Control](docs/JOINT_CONTROL.md) → [Low-Level Examples](docs/EXAMPLES.md#1-low-level-examples). Inspect feedback with `joints_example`, then test commands in `whole` simulation before Whole-Body Joint Control Mode on hardware. |
-| Implement arm/waist trajectories | [Joint Control](docs/JOINT_CONTROL.md) → [Low-Level Examples](docs/EXAMPLES.md#1-low-level-examples) → `arm_joint_example` / `arm_action_example`. Modify the example trajectories, test in `upper` simulation, then use Upper-Body Joint Control Mode on hardware. |
-| Use built-in walking, gait selection, or actions | [Developer Modes](docs/DEVELOPER_MODE.md) → [High-Level Examples](docs/EXAMPLES.md#2-high-level-examples). Enter High-Level Motion Control Mode, follow `Idle -> SuspendedStand -> RLControl`, then use motion/gait/action/steering examples and their feedback. Selecting `HumanWALKAMP` invokes the robot's built-in gait; it does not load your ONNX policy. |
+| Test or implement whole-body joint commands | [Joint Control](docs/JOINT_CONTROL.md) → [Low-Level Examples](docs/EXAMPLES.md#1-low-level-examples). Inspect feedback with `joints_example`, then test commands in `whole` simulation before Whole-Body Development Mode on hardware. |
+| Implement arm/waist trajectories | [Joint Control](docs/JOINT_CONTROL.md) → [Low-Level Examples](docs/EXAMPLES.md#1-low-level-examples) → `arm_joint_example` / `arm_action_example`. Modify the example trajectories, test in `upper` simulation, then use Upper-Body Development Mode on hardware. |
+| Use built-in walking, gait selection, or actions | [Developer Modes](docs/DEVELOPER_MODE.md) → [High-Level Examples](docs/EXAMPLES.md#2-high-level-examples). Enter High-Level Development Mode, follow `Idle -> SuspendedStand -> RLControl`, then use motion/gait/action/steering examples and their feedback. Selecting `HumanWALKAMP` invokes the robot's built-in gait; it does not load your ONNX policy. |
 | Switch Developer Mode through an application | [Developer Modes](docs/DEVELOPER_MODE.md#sdk-example-switching) → [developer_mode_example.cpp](high_level/developer_mode_example.cpp). Read the service request, confirmation, status checks, and exit procedure before integrating them. |
-| Inspect battery, faults, IMU, or gamepad events | [Monitoring Examples](docs/EXAMPLES.md#3-monitoring-examples) and [Peripheral Examples](docs/EXAMPLES.md#4-peripheral-examples). Run the relevant subscriber; these examples work in any Developer Mode and do not require the state machine. |
+| Inspect battery, faults, IMU, or gamepad events | [Monitoring Examples](docs/EXAMPLES.md#3-monitoring-examples) and [Peripheral Examples](docs/EXAMPLES.md#4-peripheral-examples). Run the relevant subscriber; these examples work in any development mode and do not require the state machine. |
 | Play audio, set volume, or record | [Audio Examples](docs/EXAMPLES.md#5-audio-examples). Transfer playback files to the robot's audio directory, then use the playback, volume, or recording examples. |
 | Change terrain, scene, or simulator timing | [Simulator product guide](https://github.com/DeepRoboticsLab/deep-robotics-simulation/blob/main/dr02_std/README.md) → its `config.yaml` and `scene.xml`. Configure shared worlds in the simulation repo and repeat the SDK simulation validation; the SDK's `BUILD_SIM` flag does not select terrain. |
 
@@ -151,7 +151,7 @@ workflows; they are not replaced by starting MuJoCo.
 >
 > - Real-robot programs may directly drive robot motion. Confirm that the robot state and surrounding motion area are safe before running them.
 > - When running a motion-control program on the real robot for the first time, test it with a reliable safety suspension in place.
-> - Before controlling the real robot, ensure that it has entered the Developer Mode required by the target program.
+> - Before controlling the real robot, ensure that it has entered Developer Mode and selected the development mode required by the target program.
 > - Only one `/JOINTS_CMD` publisher may run at a time.
 > - If an abnormal condition occurs, use the red stop button on the gamepad to stop control immediately.
 

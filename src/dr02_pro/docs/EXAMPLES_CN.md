@@ -9,22 +9,22 @@ source install/setup.bash
 ros2 run dr02_pro <example_name> [args]
 ```
 
-控制实机前，请先完成[实机部署与控制](REAL_ROBOT_CN.md)，再参阅[开发者模式文档](DEVELOPER_MODE_CN.md)选择手柄或 SDK 示例切换方式，并根据下表进入对应的开发者模式。使用仿真验证前，请根据“仿真支持”列确认示例是否支持，并参阅[仿真环境与运行](SIMULATION_CN.md)。
+控制实机前，请先完成[实机部署与控制](REAL_ROBOT_CN.md)，再参阅[开发者模式文档](DEVELOPER_MODE_CN.md)选择手柄或 SDK 示例切换方式，并根据下表选择对应的开发模式。使用仿真验证前，请根据“仿真支持”列确认示例是否支持，并参阅[仿真环境与运行](SIMULATION_CN.md)。
 
 > [!WARNING]
 >
 > 直接发布 `/JOINTS_CMD` 的示例不得与 `state_machine` 或其他 `/JOINTS_CMD` 发布者同时运行。
 >
-> 上半身关节控制示例必须在上半身关节控制模式下运行。若在全身关节控制模式下运行，腿部关节可能因未获得有效控制指令而失去支撑，导致机器人跌倒。
+> 上半身关节控制示例必须在上肢开发模式下运行。若在全身开发模式下运行，腿部关节可能因未获得有效控制指令而失去支撑，导致机器人跌倒。
 
 ## 1. 低层示例
 
-| 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
+| 示例 | Topic / 接口 | 实机开发模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
-| `joints_example` | `/JOINTS_DATA` | 全身关节控制模式 | 支持 | `ros2 run dr02_pro joints_example` | 打印一帧完整 DR02 Pro 关节状态后退出。 |
-| `joints_example` | `/JOINTS_CMD` | 全身关节控制模式 | 支持 | `ros2 run dr02_pro joints_example --confirm` | 平滑控制 31 个关节回零并保持。 |
-| `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | 上半身关节控制模式 | 支持 | `ros2 run dr02_pro arm_joint_example --confirm` | 打印 `/JOINTS_DATA` 接收延迟，并将腰部和双臂从当前位置移动到 0 位。 |
-| `arm_action_example` | `/JOINTS_CMD` | 上半身关节控制模式 | 支持 | `ros2 run dr02_pro arm_action_example <action_id> --confirm` | 直接发布 `/JOINTS_CMD` 控制腰部和上肢关节；可修改示例中的关节轨迹，自定义动作。 |
+| `joints_example` | `/JOINTS_DATA` | 全身开发模式 | 支持 | `ros2 run dr02_pro joints_example` | 打印一帧完整 DR02 Pro 关节状态后退出。 |
+| `joints_example` | `/JOINTS_CMD` | 全身开发模式 | 支持 | `ros2 run dr02_pro joints_example --confirm` | 平滑控制 31 个关节回零并保持。 |
+| `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | 上肢开发模式 | 支持 | `ros2 run dr02_pro arm_joint_example --confirm` | 打印 `/JOINTS_DATA` 接收延迟，并将腰部和双臂从当前位置移动到 0 位。 |
+| `arm_action_example` | `/JOINTS_CMD` | 上肢开发模式 | 支持 | `ros2 run dr02_pro arm_action_example <action_id> --confirm` | 直接发布 `/JOINTS_CMD` 控制腰部和上肢关节；可修改示例中的关节轨迹，自定义动作。 |
 
 预设上肢动作 ID：
 
@@ -42,15 +42,15 @@ ros2 run dr02_pro <example_name> [args]
 
 ## 2. 高层示例
 
-| 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
+| 示例 | Topic / 接口 | 实机开发模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
-| `motion_info_example` | `/MOTION_INFO` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro motion_info_example [--once]` | 查看 `/MOTION_STATE` 切换后的运动状态及当前步态。 |
-| `motion_state_example` | `/MOTION_STATE` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro motion_state_example <motion_state_value>` | 发布运动状态切换命令。初始状态为 `Idle`，正常切换顺序为 `Idle -> SuspendedStand -> RLControl`；危险情况下可切换至 `JointDamping`。 |
-| `gait_example` | `/GAIT` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro gait_example <gait_value>` | 仅在机器人进入 `RLControl` 状态后使用，用于发布步态切换命令。 |
-| `action_example` | `/ACTION` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro action_example <action_id> --confirm` | 执行机器人内置动作。仅在机器人进入 `RLControl` 状态后使用，机器人会自动进入 `Action` 运动状态；动作完成后仍处于该运动状态，需另行切回 `RLControl`。 |
-| `action_info_example` | `/ACTION_INFO` | 高层运动控制模式 | 不支持 | `ros2 run dr02_pro action_info_example` | 查看当前正在执行的内置动作；`0` 表示当前没有执行，非零值表示当前动作 ID。 |
-| `steer_example` | `/STEER` | 高层运动控制模式 / 上半身关节控制模式 | 不支持 | `ros2 run dr02_pro steer_example` | 仅在机器人进入 `RLControl` 状态后使用。键盘速度控制使用固定的保守归一化速度 `0.6`；`W/S` 前后，`A/D` 左右，`Q/E` 转向；松开按键自动停，Ctrl+C 退出。 |
-| `steer_example` | `/REAL_STEER` | 高层运动控制模式 / 上半身关节控制模式 | 不支持 | `ros2 run dr02_pro steer_example --real` | 仅在机器人进入 `RLControl` 状态后使用。默认发布 3 秒 `yaw=0.4` 的旋转指令；可根据需要在示例代码中修改 `x`、`y` 和 `yaw`。 |
+| `motion_info_example` | `/MOTION_INFO` | 高层开发模式 | 不支持 | `ros2 run dr02_pro motion_info_example [--once]` | 查看 `/MOTION_STATE` 切换后的运动状态及当前步态。 |
+| `motion_state_example` | `/MOTION_STATE` | 高层开发模式 | 不支持 | `ros2 run dr02_pro motion_state_example <motion_state_value>` | 发布运动状态切换命令。初始状态为 `Idle`，正常切换顺序为 `Idle -> SuspendedStand -> RLControl`；危险情况下可切换至 `JointDamping`。 |
+| `gait_example` | `/GAIT` | 高层开发模式 | 不支持 | `ros2 run dr02_pro gait_example <gait_value>` | 仅在机器人进入 `RLControl` 状态后使用，用于发布步态切换命令。 |
+| `action_example` | `/ACTION` | 高层开发模式 | 不支持 | `ros2 run dr02_pro action_example <action_id> --confirm` | 执行机器人内置动作。仅在机器人进入 `RLControl` 状态后使用，机器人会自动进入 `Action` 运动状态；动作完成后仍处于该运动状态，需另行切回 `RLControl`。 |
+| `action_info_example` | `/ACTION_INFO` | 高层开发模式 | 不支持 | `ros2 run dr02_pro action_info_example` | 查看当前正在执行的内置动作；`0` 表示当前没有执行，非零值表示当前动作 ID。 |
+| `steer_example` | `/STEER` | 高层开发模式 / 上肢开发模式 | 不支持 | `ros2 run dr02_pro steer_example` | 仅在机器人进入 `RLControl` 状态或者上肢开发模式使用。键盘速度控制使用固定的保守归一化速度 `0.6`；`W/S` 前后，`A/D` 左右，`Q/E` 转向；松开按键自动停，Ctrl+C 退出。 |
+| `steer_example` | `/REAL_STEER` | 高层开发模式 / 上肢开发模式 | 不支持 | `ros2 run dr02_pro steer_example --real` | 仅在机器人进入 `RLControl` 状态或者上肢开发模式使用。默认发布 3 秒 `yaw=0.4` 的旋转指令；可根据需要在示例代码中修改 `x`、`y` 和 `yaw`。 |
 
 > [!WARNING]
 >
@@ -94,7 +94,7 @@ ros2 run dr02_pro <example_name> [args]
 
 ## 3. 状态监测示例
 
-| 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
+| 示例 | Topic / 接口 | 实机开发模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
 | `battery_state_example` | `/BATTERY_DATA` | 任意 | 不支持 | `ros2 run dr02_pro battery_state_example` | 打印电量、电压、电流和保护状态。 |
 | `fault_snapshot_example` | `/fault_aggregator` | 任意 | 不支持 | `ros2 run dr02_pro fault_snapshot_example` | 订阅 `drdds/msg/FaultEventArray` 并打印当前故障快照。 |
@@ -116,7 +116,7 @@ ros2 run dr02_pro <example_name> [args]
 
 ## 4. 外设示例
 
-| 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
+| 示例 | Topic / 接口 | 实机开发模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
 | `imu_example` | `/IMU_DATA_HEAD`, `/IMU_DATA_BASE` | 任意 | 不支持 | `ros2 run dr02_pro imu_example` | 订阅 `sensor_msgs/msg/Imu`，打印头部和基座 IMU 的四元数、角速度和线加速度。 |
 | `gamepad_key_example` | `/GAMEPAD_KEY` | 任意 | 不支持 | `ros2 run dr02_pro gamepad_key_example` | 打印手柄按键事件。 |
@@ -130,7 +130,7 @@ scp test.wav user@10.21.33.103:/var/opt/robot/data/audio/
 ros2 run dr02_pro audio_play_example test.wav
 ```
 
-| 示例 | Topic / 接口 | 实机开发者模式 | 仿真支持 | 运行命令 | 说明 |
+| 示例 | Topic / 接口 | 实机开发模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
 | `audio_play_example` | `/AUDIO/PLAY_FILE` | 任意 | 不支持 | `ros2 run dr02_pro audio_play_example test.wav` | 发布远程文件名触发播放。 |
 | `audio_volume_example` | `/AUDIO/VOLUME_CMD` | 任意 | 不支持 | `ros2 run dr02_pro audio_volume_example <0-100>` | 发布目标音量百分比。 |

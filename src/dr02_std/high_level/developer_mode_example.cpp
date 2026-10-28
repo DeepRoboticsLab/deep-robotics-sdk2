@@ -35,10 +35,9 @@ enum class RobotMotionState : int32_t {
 };
 
 enum class DeveloperMode : uint32_t {
-    None = 0,       // Developer access enabled without a selected control mode.
+    HighLevel = 0,  // High-level motion control.
     UpperBody = 1,  // Upper-body joint control.
     WholeBody = 2,  // Whole-body joint control.
-    HighLevel = 3,  // High-level motion control.
 };
 
 constexpr auto kServiceTimeout = std::chrono::seconds(5);
@@ -51,14 +50,12 @@ constexpr auto kStateTimeout = std::chrono::seconds(60);
  */
 const char* ModeName(DeveloperMode mode) {
     switch (mode) {
-        case DeveloperMode::None:
-            return "none";
+        case DeveloperMode::HighLevel:
+            return "high_level";
         case DeveloperMode::UpperBody:
             return "upper_body";
         case DeveloperMode::WholeBody:
             return "whole_body";
-        case DeveloperMode::HighLevel:
-            return "high_level";
         default:
             return "unknown";
     }
@@ -170,6 +167,7 @@ private:
             return false;
         }
 
+        RCLCPP_INFO(get_logger(), "Calling /DEVELOPER_MODE: %s", command.c_str());
         auto request = std::make_shared<DeveloperModeService::Request>();
         request->command = command;
         auto future = developer_mode_client_->async_send_request(request);
@@ -179,11 +177,11 @@ private:
         }
 
         const auto response = future.get();
-        RCLCPP_INFO(get_logger(), "/DEVELOPER_MODE result: %s", response->result.c_str());
         if (response->result != "success") {
-            RCLCPP_ERROR(get_logger(), "Mode operation was rejected: %s", response->result.c_str());
+            RCLCPP_ERROR(get_logger(), "/DEVELOPER_MODE result: %s", response->result.c_str());
             return false;
         }
+        RCLCPP_INFO(get_logger(), "/DEVELOPER_MODE result: success");
         return true;
     }
 
@@ -229,8 +227,9 @@ private:
                 return true;
             }
         }
-        RCLCPP_ERROR(get_logger(), "Timed out waiting for developer mode: enabled=%s mode=%u",
-                     expected_enabled ? "true" : "false", static_cast<uint32_t>(expected_mode));
+        RCLCPP_ERROR(get_logger(), "Timed out waiting for developer mode: enabled=%s mode=%s (%u)",
+                     expected_enabled ? "true" : "false", ModeName(expected_mode),
+                     static_cast<uint32_t>(expected_mode));
         return false;
     }
 
@@ -310,23 +309,11 @@ public:
     bool EnterHighLevelMode() {
         RCLCPP_WARN(get_logger(), "Entering High-Level Motion Control Mode on the real robot");
 
-        // Enable developer access before selecting a control mode.
+        // Enabling Developer Mode starts in High-Level Motion Control Mode (Mode 0).
         const nlohmann::json enable_command = {
             {"Action", "enable"},
         };
         if (!CallDeveloperMode(enable_command.dump())) {
-            return false;
-        }
-        if (!WaitForDeveloperMode(true, DeveloperMode::None)) {
-            return false;
-        }
-
-        // Select high-level motion control.
-        const nlohmann::json set_mode_command = {
-            {"Action", "set_mode"},
-            {"Mode", 3},
-        };
-        if (!CallDeveloperMode(set_mode_command.dump())) {
             return false;
         }
         if (!WaitForDeveloperMode(true, DeveloperMode::HighLevel)) {
@@ -347,7 +334,7 @@ public:
         if (!CallDeveloperMode(enable_command.dump())) {
             return false;
         }
-        if (!WaitForDeveloperMode(true, DeveloperMode::None)) {
+        if (!WaitForDeveloperMode(true, DeveloperMode::HighLevel)) {
             return false;
         }
 
@@ -378,41 +365,59 @@ public:
         if (!CallDeveloperMode(enable_command.dump())) {
             return false;
         }
-        if (!WaitForDeveloperMode(true, DeveloperMode::None)) {
+        if (!WaitForDeveloperMode(true, DeveloperMode::HighLevel)) {
             return false;
         }
 
-        // Enter suspended stand before the robot is lowered to the ground.
-        std::cout << "The robot will enter SuspendedStand. Make sure it is safely suspended and both feet "
-                     "are off the ground.\n"
-                  << "Enter yes to continue, or enter anything else to cancel: ";
-        std::string suspension_confirmation;
-        if (!std::getline(std::cin, suspension_confirmation) || suspension_confirmation != "yes") {
-            RCLCPP_WARN(get_logger(), "Upper-body mode entry cancelled before SuspendedStand");
-            return false;
-        }
-        if (!PublishMotionState(RobotMotionState::SuspendedStand)) {
-            return false;
-        }
-        if (!WaitForMotionState(RobotMotionState::SuspendedStand)) {
+        RobotMotionState motion_state = RobotMotionState::Idle;
+        if (!GetCurrentMotionState(motion_state)) {
             return false;
         }
 
-        std::cout << "The robot is in SuspendedStand. Lower it to the ground and confirm that both feet "
-                     "are stable.\n"
-                  << "Enter yes to continue to RLControl, or enter anything else to cancel: ";
-        std::string confirmation;
-        if (!std::getline(std::cin, confirmation) || confirmation != "yes") {
-            RCLCPP_WARN(get_logger(), "Upper-body mode entry cancelled before RLControl");
-            return false;
-        }
+        if (motion_state == RobotMotionState::RLControl) {
+            RCLCPP_INFO(get_logger(), "Robot is already in RLControl; skipping suspended-stand preparation");
+        } else {
+            if (motion_state != RobotMotionState::Idle && motion_state != RobotMotionState::SuspendedStand) {
+                RCLCPP_ERROR(get_logger(),
+                             "Upper-body mode entry can start only from Idle, SuspendedStand, or RLControl; current state is %s",
+                             MotionStateName(motion_state));
+                return false;
+            }
 
-        // Enter RL control only after both feet are stable on the ground.
-        if (!PublishMotionState(RobotMotionState::RLControl)) {
-            return false;
-        }
-        if (!WaitForMotionState(RobotMotionState::RLControl)) {
-            return false;
+            if (motion_state == RobotMotionState::Idle) {
+                // Enter suspended stand before the robot is lowered to the ground.
+                std::cout << "The robot will enter SuspendedStand. Make sure it is safely suspended and both feet "
+                             "are off the ground.\n"
+                          << "Enter yes to continue, or enter anything else to cancel: ";
+                std::string suspension_confirmation;
+                if (!std::getline(std::cin, suspension_confirmation) || suspension_confirmation != "yes") {
+                    RCLCPP_WARN(get_logger(), "Upper-body mode entry cancelled before SuspendedStand");
+                    return false;
+                }
+                if (!PublishMotionState(RobotMotionState::SuspendedStand)) {
+                    return false;
+                }
+                if (!WaitForMotionState(RobotMotionState::SuspendedStand)) {
+                    return false;
+                }
+            }
+
+            std::cout << "The robot is in SuspendedStand. Lower it to the ground and confirm that both feet "
+                         "are stable.\n"
+                      << "Enter yes to continue to RLControl, or enter anything else to cancel: ";
+            std::string confirmation;
+            if (!std::getline(std::cin, confirmation) || confirmation != "yes") {
+                RCLCPP_WARN(get_logger(), "Upper-body mode entry cancelled before RLControl");
+                return false;
+            }
+
+            // Enter RL control only after both feet are stable on the ground.
+            if (!PublishMotionState(RobotMotionState::RLControl)) {
+                return false;
+            }
+            if (!WaitForMotionState(RobotMotionState::RLControl)) {
+                return false;
+            }
         }
 
         // Select upper-body joint control.
@@ -434,7 +439,7 @@ public:
 
     bool ExitCurrentMode() {
         bool enabled = false;
-        DeveloperMode mode = DeveloperMode::None;
+        DeveloperMode mode = DeveloperMode::HighLevel;
         if (!GetDeveloperModeStatus(enabled, mode)) {
             return false;
         }
@@ -447,28 +452,38 @@ public:
         if (!GetCurrentMotionState(motion_state)) {
             return false;
         }
-        if (motion_state != RobotMotionState::Idle) {
-            switch (mode) {
-                case DeveloperMode::None:
-                    break;
-                case DeveloperMode::HighLevel:
-                case DeveloperMode::WholeBody: {
-                    RCLCPP_WARN(get_logger(), "Exit will enter JointDamping");
-
-                    std::cout << "The robot will enter JointDamping and may lose active support. Enter yes to continue, "
-                                 "or enter anything else to cancel: ";
-                    std::string damping_confirmation;
-                    if (!std::getline(std::cin, damping_confirmation) || damping_confirmation != "yes") {
-                        RCLCPP_INFO(get_logger(), "%s exit cancelled before JointDamping", ModeName(mode));
-                        return true;
-                    }
+        switch (mode) {
+            case DeveloperMode::HighLevel:
+                if (motion_state == RobotMotionState::Idle) {
+                    RCLCPP_INFO(get_logger(), "Motion state is already Idle; skipping JointDamping");
                     break;
                 }
-                case DeveloperMode::UpperBody: {
-                    std::cout << "Make sure the upper-body posture is stable. Enter yes to return to RLControl; "
-                                 "if the upper body is limp, blocked, or cannot be safely controlled, cancel and use "
-                                 "damping_exit instead.\n"
-                              << "Enter yes to continue, or enter anything else to cancel: ";
+
+                RCLCPP_WARN(get_logger(), "Exit will enter JointDamping");
+                std::cout << "The robot will enter JointDamping and may lose active support. Enter yes to continue, "
+                             "or enter anything else to cancel: ";
+                {
+                    std::string damping_confirmation;
+                    if (!std::getline(std::cin, damping_confirmation) || damping_confirmation != "yes") {
+                        RCLCPP_INFO(get_logger(), "Exit stopped before JointDamping; Developer Mode remains enabled");
+                        return true;
+                    }
+                }
+                if (!PublishMotionState(RobotMotionState::JointDamping)) {
+                    return false;
+                }
+                if (!WaitForMotionState(RobotMotionState::JointDamping) ||
+                    !WaitForMotionState(RobotMotionState::Idle)) {
+                    return false;
+                }
+                break;
+
+            case DeveloperMode::UpperBody:
+                std::cout << "Make sure the upper-body posture is stable. Enter yes to return to RLControl; "
+                             "if the upper body is limp, blocked, or cannot be safely controlled, cancel and use "
+                             "damping_exit instead.\n"
+                          << "Enter yes to continue, or enter anything else to cancel: ";
+                {
                     std::string rl_control_confirmation;
                     if (!std::getline(std::cin, rl_control_confirmation) || rl_control_confirmation != "yes") {
                         RCLCPP_INFO(
@@ -476,8 +491,10 @@ public:
                             "Upper-body exit cancelled before returning to RLControl; use damping_exit if needed");
                         return true;
                     }
+                }
 
-                    // Clearing upper-body control makes the lower-level controller return to RLControl.
+                // Return to high-level control; the lower-level controller moves back to RLControl.
+                {
                     const nlohmann::json set_mode_command = {
                         {"Action", "set_mode"},
                         {"Mode", 0},
@@ -485,72 +502,82 @@ public:
                     if (!CallDeveloperMode(set_mode_command.dump())) {
                         return false;
                     }
-                    if (!WaitForDeveloperMode(true, DeveloperMode::None)) {
-                        return false;
-                    }
-                    if (!WaitForMotionState(RobotMotionState::RLControl)) {
-                        return false;
-                    }
+                }
+                if (!WaitForDeveloperMode(true, DeveloperMode::HighLevel) ||
+                    !WaitForMotionState(RobotMotionState::RLControl)) {
+                    return false;
+                }
 
-                    std::cout << "The robot has returned to RLControl. Enter yes to continue with JointDamping and "
-                                 "exit developer mode, or enter anything else to cancel: ";
+                RCLCPP_WARN(get_logger(), "Exit will enter JointDamping");
+                std::cout << "The robot will enter JointDamping and may lose active support. Enter yes to continue, "
+                             "or enter anything else to cancel: ";
+                {
                     std::string damping_confirmation;
                     if (!std::getline(std::cin, damping_confirmation) || damping_confirmation != "yes") {
-                        RCLCPP_INFO(get_logger(),
-                                    "Upper-body exit stopped at RLControl; developer mode remains enabled");
+                        RCLCPP_INFO(get_logger(), "Exit stopped before JointDamping; Developer Mode remains enabled");
                         return true;
                     }
-                    break;
                 }
-                default:
-                    RCLCPP_ERROR(get_logger(), "Unknown developer mode: %u", static_cast<uint32_t>(mode));
-                    return false;
-            }
-
-            // Return active control modes to Idle before clearing developer control.
-            if (mode != DeveloperMode::None) {
                 if (!PublishMotionState(RobotMotionState::JointDamping)) {
                     return false;
                 }
-                if (!WaitForMotionState(RobotMotionState::JointDamping)) {
+                if (!WaitForMotionState(RobotMotionState::JointDamping) ||
+                    !WaitForMotionState(RobotMotionState::Idle)) {
                     return false;
+                }
+                break;
+
+            case DeveloperMode::WholeBody:
+                RCLCPP_WARN(get_logger(),
+                            "Exit Whole-Body Joint Control Mode; motion_master will enter JointDamping");
+                std::cout << "The robot will enter JointDamping and may lose active support. Enter yes to continue, "
+                             "or enter anything else to cancel: ";
+                {
+                    std::string damping_confirmation;
+                    if (!std::getline(std::cin, damping_confirmation) || damping_confirmation != "yes") {
+                        RCLCPP_INFO(get_logger(),
+                                    "Exit stopped before Whole-Body mode exit; Developer Mode remains enabled");
+                        return true;
+                    }
+                }
+
+                // Mode 0 makes motion_master enter JointDamping before returning to Idle.
+                {
+                    const nlohmann::json set_mode_command = {
+                        {"Action", "set_mode"},
+                        {"Mode", 0},
+                    };
+                    if (!CallDeveloperMode(set_mode_command.dump())) {
+                        return false;
+                    }
                 }
                 if (!WaitForMotionState(RobotMotionState::Idle)) {
                     return false;
                 }
-            }
-        } else {
-            RCLCPP_INFO(get_logger(), "Motion state is already Idle; skipping JointDamping");
+                break;
+
+            default:
+                RCLCPP_ERROR(get_logger(), "Unknown developer mode: %u", static_cast<uint32_t>(mode));
+                return false;
         }
 
-        // Idempotently clear the current developer control mode.
-        const nlohmann::json set_mode_command = {
-            {"Action", "set_mode"},
-            {"Mode", 0},
-        };
-        if (!CallDeveloperMode(set_mode_command.dump())) {
-            return false;
-        }
-        if (!WaitForDeveloperMode(true, DeveloperMode::None)) {
-            return false;
-        }
-
-        // Exit outer developer access after the active control mode has stopped.
+        // Disable Developer Mode after the active control mode has stopped.
         const nlohmann::json disable_command = {
             {"Action", "disable"},
         };
         if (!CallDeveloperMode(disable_command.dump())) {
             return false;
         }
-        if (!WaitForDeveloperMode(false, DeveloperMode::None)) {
+        if (!WaitForDeveloperMode(false, DeveloperMode::HighLevel)) {
             return false;
         }
+        RCLCPP_INFO(get_logger(), "Developer mode exited");
         return true;
     }
 
     bool DampingExit() {
         bool enabled = false;
-        DeveloperMode mode = DeveloperMode::None;
+        DeveloperMode mode = DeveloperMode::HighLevel;
         if (!GetDeveloperModeStatus(enabled, mode)) {
             return false;
         }
@@ -578,26 +605,16 @@ public:
                 return false;
             }
         }
-
-        const nlohmann::json set_mode_command = {
-            {"Action", "set_mode"},
-            {"Mode", 0},
-        };
-        if (!CallDeveloperMode(set_mode_command.dump())) {
-            return false;
-        }
-        if (!WaitForDeveloperMode(true, DeveloperMode::None)) {
-            return false;
-        }
         const nlohmann::json disable_command = {
             {"Action", "disable"},
         };
         if (!CallDeveloperMode(disable_command.dump())) {
             return false;
         }
-        if (!WaitForDeveloperMode(false, DeveloperMode::None)) {
+        if (!WaitForDeveloperMode(false, DeveloperMode::HighLevel)) {
             return false;
         }
+        RCLCPP_INFO(get_logger(), "Developer mode exited");
         return true;
     }
 
@@ -611,7 +628,7 @@ private:
     std::condition_variable status_cv_;
     bool developer_mode_status_received_ = false;
     bool developer_mode_enabled_ = false;
-    DeveloperMode developer_mode_ = DeveloperMode::None;
+    DeveloperMode developer_mode_ = DeveloperMode::HighLevel;
 
     std::mutex motion_mutex_;
     std::condition_variable motion_cv_;

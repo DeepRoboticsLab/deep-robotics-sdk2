@@ -8,12 +8,12 @@ DR02 Pro 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，AMP 策略使�
 
 ### 1.1 实机控制
 
-实机运行前，请先完成[实机部署](REAL_ROBOT_CN.md)，并按照[开发者模式文档](DEVELOPER_MODE_CN.md#handle-switching)进入全身关节控制模式。
+实机运行前，请先完成[实机部署](REAL_ROBOT_CN.md)，并按照[开发者模式文档](DEVELOPER_MODE_CN.md#handle-switching)进入全身开发模式。
 
 > [!IMPORTANT]
 >
-> - 当前状态机代码默认仅支持全身关节控制模式。
-> - 如需在上半身关节控制模式下运行，需根据实际控制需求自行修改状态机代码。
+> - 当前状态机代码默认仅支持全身开发模式。
+> - 如需在上肢开发模式下运行，需根据实际控制需求自行修改状态机代码。
 > - 修改后建议先在仿真环境中验证，再部署到实机。
 
 > [!WARNING]
@@ -30,6 +30,14 @@ DR02 Pro 状态机订阅 `/JOINTS_DATA`，发布 `/JOINTS_CMD`，AMP 策略使�
 source install/setup.bash
 ros2 run dr02_pro state_machine
 ```
+
+在 AOS 主机（`10.21.33.103`）上建议绑核执行：
+
+```bash
+ros2 run --prefix 'taskset -c 4-7' dr02_pro state_machine
+```
+
+`4-7` 表示使用逻辑 CPU 4、5、6、7，可根据实际需要修改。
 
 ## 3. 状态流转
 
@@ -76,7 +84,7 @@ AMP 与 Mimic 之间的手动切换直接进行，不经过 `StandUp`；切换�
 
 > [!WARNING]
 >
-> - 实机运行状态机前，应确认机器人已进入正确的开发者模式。
+> - 实机运行状态机前，应确认机器人已进入开发者模式，并选择全身开发模式。
 > - 进入 `ZeroPos`、`StandUp` 或策略控制前，应确认机器人状态和运动空间安全。
 > - 实机请求 AMP 或 Mimic（包括进入 `StandUp`）前，必须先将机器人放下并确认双脚稳定接触地面。吊绳可以保留用于保护，但不得使机器人处于悬空状态。悬空切换可能产生突然动作或失稳，造成人身伤害或设备损坏。
 > - `/JOINTS_CMD` 同一时间只允许一个发布者。

@@ -72,7 +72,7 @@ Mimic：**动作重定向 → 准备跟踪动作并训练 → 导出 ONNX → SD
 仿真时，需要同时阅读 [SDK 仿真文档](docs/SIMULATION_CN.md)和
 [仿真产品文档](https://github.com/DeepRoboticsLab/deep-robotics-simulation/blob/main/dr02_pro/README_CN.md)。两个进程在不同终端运行，使用相同的 ROS
 发行版、消息版本和 `ROS_DOMAIN_ID`。状态机或全身关节示例使用仿真的 `control.mode: whole`，
-手臂示例使用 `upper`。仿真 `upper` 模式约束基座和腿部；实机上半身关节控制模式则由
+手臂示例使用 `upper`。仿真 `upper` 模式约束基座和腿部；实机上肢开发模式则由
 机器人内部控制器控制腿部。仿真配置不会切换实机的开发者模式。
 
 ### 5.2 部署 AMP 策略
@@ -104,7 +104,7 @@ Mimic：**动作重定向 → 准备跟踪动作并训练 → 导出 ONNX → SD
    离线 AOS 需传入消息源码，用安装脚本的 `--source-dir` 安装。传输 SDK 源码和策略资源，
    在目标 ARM 主机进行全新原生编译，设置 `BUILD_PLATFORM=arm`、`BUILD_SIM=OFF`。
    策略路径相对于编译时记录的源码位置解析，需保留目标主机上的源码和资源，不能只复制可执行文件。
-6. **切换实机模式并运行。** 按[开发者模式](docs/DEVELOPER_MODE_CN.md)进入**全身关节控制模式**，
+6. **切换实机模式并运行。** 按[开发者模式](docs/DEVELOPER_MODE_CN.md)进入**全身开发模式**，
    再按[状态机](docs/STATE_MACHINE_CN.md)及其安全要求操作。进入策略控制前确认双脚接地，
    按文档执行停止流程。修改策略或控制器后，先重新仿真验证，再重复上机流程。
 
@@ -115,7 +115,7 @@ Pro 状态机启动时同时初始化 AMP 和 Mimic runner，即使只测试 AMP
 
 实机部署同样先阅读 **[实机部署](docs/REAL_ROBOT_CN.md) →
 [开发者模式](docs/DEVELOPER_MODE_CN.md) → [状态机](docs/STATE_MACHINE_CN.md)**，
-明确部署主机、全身关节控制模式，以及 AMP/Mimic 切换与停止操作。
+明确部署主机、全身开发模式，以及 AMP/Mimic 切换与停止操作。
 
 Mimic 策略需要训练时跟踪的参考动作。部署时同时提供 ONNX 和对应动作，
 仓库自带的 `fist_routine` 就是一组示例。
@@ -148,9 +148,9 @@ Mimic 策略需要训练时跟踪的参考动作。部署时同时提供 ONNX �
 
 | 目标 | 阅读顺序与操作 |
 | --- | --- |
-| 测试或编写全身关节命令 | [关节控制接口](docs/JOINT_CONTROL_CN.md) → [低层示例](docs/EXAMPLES_CN.md#1-低层示例)。先用 `joints_example` 查看反馈，再在 `whole` 仿真中验证命令，最后进入实机全身关节控制模式。 |
-| 编写手臂、腰部轨迹 | [关节控制接口](docs/JOINT_CONTROL_CN.md) → [低层示例](docs/EXAMPLES_CN.md#1-低层示例) → `arm_joint_example` / `arm_action_example`。修改示例轨迹，先在 `upper` 仿真中验证，再使用实机上半身关节控制模式。 |
-| 使用内置行走、步态或动作 | [开发者模式](docs/DEVELOPER_MODE_CN.md) → [高层示例](docs/EXAMPLES_CN.md#2-高层示例)。进入高层运动控制模式，按 `Idle -> SuspendedStand -> RLControl` 操作，再使用运动状态、步态、动作、方向控制及反馈示例。选择 `HumanWALKAMP` 调用机器人内置步态，不会加载自定义 ONNX。 |
+| 测试或编写全身关节命令 | [关节控制接口](docs/JOINT_CONTROL_CN.md) → [低层示例](docs/EXAMPLES_CN.md#1-低层示例)。先用 `joints_example` 查看反馈，再在 `whole` 仿真中验证命令，最后进入实机全身开发模式。 |
+| 编写手臂、腰部轨迹 | [关节控制接口](docs/JOINT_CONTROL_CN.md) → [低层示例](docs/EXAMPLES_CN.md#1-低层示例) → `arm_joint_example` / `arm_action_example`。修改示例轨迹，先在 `upper` 仿真中验证，再使用实机上肢开发模式。 |
+| 使用内置行走、步态或动作 | [开发者模式](docs/DEVELOPER_MODE_CN.md) → [高层示例](docs/EXAMPLES_CN.md#2-高层示例)。进入高层开发模式，按 `Idle -> SuspendedStand -> RLControl` 操作，再使用运动状态、步态、动作、方向控制及反馈示例。选择 `HumanWALKAMP` 调用机器人内置步态，不会加载自定义 ONNX。 |
 | 在应用中切换开发者模式 | [SDK 切换步骤](docs/DEVELOPER_MODE_CN.md#sdk-example-switching) → [developer_mode_example.cpp](high_level/developer_mode_example.cpp)。接入前理解服务请求、确认、状态检查与退出流程。 |
 | 查看电池、故障、IMU 或手柄事件 | [状态监测示例](docs/EXAMPLES_CN.md#3-状态监测示例)及[外设示例](docs/EXAMPLES_CN.md#4-外设示例)。运行相应订阅程序，各开发者模式均可使用，无需启动状态机。 |
 | 播放音频、调节音量或录音 | [音频示例](docs/EXAMPLES_CN.md#5-音频示例)。先把播放文件传到机器人音频目录，再使用播放、音量或录音示例。 |
@@ -166,7 +166,7 @@ Mimic 策略需要训练时跟踪的参考动作。部署时同时提供 ONNX �
 >
 > - 实机程序可能直接驱动机器人运动，运行前应确认机器人状态和运动空间安全。
 > - 首次实机运行具有运动控制功能的程序时，应在具备可靠吊绳保护的条件下进行测试。
-> - 控制实机前，应确保机器人已进入与目标程序匹配的开发者模式。
+> - 控制实机前，应确保机器人已进入开发者模式，并选择与目标程序匹配的开发模式。
 > - `/JOINTS_CMD` 同一时间只允许一个发布者。
 > - 发生异常时，应优先使用手柄红色停止按钮退出控制。
 

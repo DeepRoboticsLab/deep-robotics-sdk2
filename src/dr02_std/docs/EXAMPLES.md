@@ -9,22 +9,22 @@ source install/setup.bash
 ros2 run dr02_std <example_name> [args]
 ```
 
-Before controlling the real robot, complete [Real-Robot Deployment and Control](REAL_ROBOT.md), then see [Developer Modes](DEVELOPER_MODE.md) to choose the gamepad or SDK example switching method and enter the required mode. Before simulation validation, check the Simulation Support column and see [Simulation Environment and Operation](SIMULATION.md).
+Before controlling the real robot, complete [Real-Robot Deployment and Control](REAL_ROBOT.md), then see [Developer Modes](DEVELOPER_MODE.md) to choose the gamepad or SDK example switching method and select the required development mode. Before simulation validation, check the Simulation Support column and see [Simulation Environment and Operation](SIMULATION.md).
 
 > [!WARNING]
 >
 > Examples that publish `/JOINTS_CMD` directly must not run with `state_machine` or another `/JOINTS_CMD` publisher.
 >
-> Upper-body joint-control examples must be run in Upper-Body Joint Control Mode. If they are run in Whole-Body Joint Control Mode, the leg joints may lose support because they do not receive valid control commands, causing the robot to fall.
+> Upper-body joint-control examples must be run in Upper-Body Development Mode. If they are run in Whole-Body Development Mode, the leg joints may lose support because they do not receive valid control commands, causing the robot to fall.
 
 ## 1. Low-Level Examples
 
-| Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
+| Example | Topic / Interface | Real-Robot Development Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
-| `joints_example` | `/JOINTS_DATA` | Whole-Body Joint Control Mode | Supported | `ros2 run dr02_std joints_example` | Prints one complete DR02 Std joint-state frame and exits. |
-| `joints_example` | `/JOINTS_CMD` | Whole-Body Joint Control Mode | Supported | `ros2 run dr02_std joints_example --confirm` | Moves all 21 joints smoothly to the zero position and holds the command. |
-| `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | Upper-Body Joint Control Mode | Supported | `ros2 run dr02_std arm_joint_example --confirm` | Prints `/JOINTS_DATA` receive latency and moves the waist and both arms from their current positions to zero. |
-| `arm_action_example` | `/JOINTS_CMD` | Upper-Body Joint Control Mode | Supported | `ros2 run dr02_std arm_action_example <action_id> --confirm` | Publishes `/JOINTS_CMD` directly to control the waist and upper-body joints; modify the joint trajectories in the example to define custom actions. |
+| `joints_example` | `/JOINTS_DATA` | Whole-Body Development Mode | Supported | `ros2 run dr02_std joints_example` | Prints one complete DR02 Std joint-state frame and exits. |
+| `joints_example` | `/JOINTS_CMD` | Whole-Body Development Mode | Supported | `ros2 run dr02_std joints_example --confirm` | Moves all 21 joints smoothly to the zero position and holds the command. |
+| `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | Upper-Body Development Mode | Supported | `ros2 run dr02_std arm_joint_example --confirm` | Prints `/JOINTS_DATA` receive latency and moves the waist and both arms from their current positions to zero. |
+| `arm_action_example` | `/JOINTS_CMD` | Upper-Body Development Mode | Supported | `ros2 run dr02_std arm_action_example <action_id> --confirm` | Publishes `/JOINTS_CMD` directly to control the waist and upper-body joints; modify the joint trajectories in the example to define custom actions. |
 
 Preset upper-body action IDs:
 
@@ -42,15 +42,15 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 
 ## 2. High-Level Examples
 
-| Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
+| Example | Topic / Interface | Real-Robot Development Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
-| `motion_info_example` | `/MOTION_INFO` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_std motion_info_example [--once]` | Shows the motion state selected through `/MOTION_STATE` and the current gait. |
-| `motion_state_example` | `/MOTION_STATE` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_std motion_state_example <motion_state_value>` | Publishes a motion-state transition command. The initial state is `Idle`, and the normal transition sequence is `Idle -> SuspendedStand -> RLControl`; switch to `JointDamping` in a dangerous condition. |
-| `gait_example` | `/GAIT` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_std gait_example <gait_value>` | Use only after the robot enters `RLControl`; publishes a gait transition command. |
-| `action_example` | `/ACTION` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_std action_example <action_id> --confirm` | Executes a robot built-in action. Use only after the robot enters `RLControl`; the robot automatically enters the `Action` motion state and remains there after the action finishes. Switch back to `RLControl` separately. |
-| `action_info_example` | `/ACTION_INFO` | High-Level Motion Control Mode | Not supported | `ros2 run dr02_std action_info_example` | Shows the built-in action currently being executed; `0` means no action is being executed, and a nonzero value is the current action ID. |
-| `steer_example` | `/STEER` | High-Level Motion Control Mode / Upper-Body Joint Control Mode | Not supported | `ros2 run dr02_std steer_example` | Use only after the robot enters `RLControl`. Keyboard velocity control uses a fixed conservative normalized value of `0.6`; `W/S` moves forward/backward, `A/D` moves left/right, and `Q/E` turns. Releasing a key stops the command; Ctrl+C exits. |
-| `steer_example` | `/REAL_STEER` | High-Level Motion Control Mode / Upper-Body Joint Control Mode | Not supported | `ros2 run dr02_std steer_example --real` | Use only after the robot enters `RLControl`. Publishes a rotation command with `yaw=0.4` for 3 seconds by default; modify `x`, `y`, and `yaw` in the example source as needed. |
+| `motion_info_example` | `/MOTION_INFO` | High-Level Development Mode | Not supported | `ros2 run dr02_std motion_info_example [--once]` | Shows the motion state selected through `/MOTION_STATE` and the current gait. |
+| `motion_state_example` | `/MOTION_STATE` | High-Level Development Mode | Not supported | `ros2 run dr02_std motion_state_example <motion_state_value>` | Publishes a motion-state transition command. The initial state is `Idle`, and the normal transition sequence is `Idle -> SuspendedStand -> RLControl`; switch to `JointDamping` in a dangerous condition. |
+| `gait_example` | `/GAIT` | High-Level Development Mode | Not supported | `ros2 run dr02_std gait_example <gait_value>` | Use only after the robot enters `RLControl`; publishes a gait transition command. |
+| `action_example` | `/ACTION` | High-Level Development Mode | Not supported | `ros2 run dr02_std action_example <action_id> --confirm` | Executes a robot built-in action. Use only after the robot enters `RLControl`; the robot automatically enters the `Action` motion state and remains there after the action finishes. Switch back to `RLControl` separately. |
+| `action_info_example` | `/ACTION_INFO` | High-Level Development Mode | Not supported | `ros2 run dr02_std action_info_example` | Shows the built-in action currently being executed; `0` means no action is being executed, and a nonzero value is the current action ID. |
+| `steer_example` | `/STEER` | High-Level Development Mode / Upper-Body Development Mode | Not supported | `ros2 run dr02_std steer_example` | Use only when the robot is in the `RLControl` state or Upper-Body Development Mode. Keyboard velocity control uses a fixed conservative normalized value of `0.6`; `W/S` moves forward/backward, `A/D` moves left/right, and `Q/E` turns. Releasing a key stops the command; Ctrl+C exits. |
+| `steer_example` | `/REAL_STEER` | High-Level Development Mode / Upper-Body Development Mode | Not supported | `ros2 run dr02_std steer_example --real` | Use only when the robot is in the `RLControl` state or Upper-Body Development Mode. Publishes a rotation command with `yaw=0.4` for 3 seconds by default; modify `x`, `y`, and `yaw` in the example source as needed. |
 
 > [!WARNING]
 >
@@ -88,7 +88,7 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 
 ## 3. Monitoring Examples
 
-| Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
+| Example | Topic / Interface | Real-Robot Development Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
 | `battery_state_example` | `/BATTERY_DATA` | Any | Not supported | `ros2 run dr02_std battery_state_example` | Prints battery level, voltage, current, and protection state. |
 | `fault_snapshot_example` | `/fault_aggregator` | Any | Not supported | `ros2 run dr02_std fault_snapshot_example` | Subscribes to `drdds/msg/FaultEventArray` and prints the current-fault snapshot. |
@@ -110,7 +110,7 @@ Severity increases from `DEBUG(0)`, `INFO(1)`, `NOTICE(2)`, `WARN(3)`, `ERROR(4)
 
 ## 4. Peripheral Examples
 
-| Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
+| Example | Topic / Interface | Real-Robot Development Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
 | `imu_example` | `/IMU_DATA_BASE` | Any | Not supported | `ros2 run dr02_std imu_example` | Subscribes to `sensor_msgs/msg/Imu` and prints the base IMU quaternion, angular velocity, and linear acceleration. |
 | `gamepad_key_example` | `/GAMEPAD_KEY` | Any | Not supported | `ros2 run dr02_std gamepad_key_example` | Prints gamepad key events. |
@@ -124,7 +124,7 @@ scp test.wav user@10.21.33.103:/var/opt/robot/data/audio/
 ros2 run dr02_std audio_play_example test.wav
 ```
 
-| Example | Topic / Interface | Real-Robot Developer Mode | Simulation Support | Command | Description |
+| Example | Topic / Interface | Real-Robot Development Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
 | `audio_play_example` | `/AUDIO/PLAY_FILE` | Any | Not supported | `ros2 run dr02_std audio_play_example test.wav` | Publishes a remote file name to start playback. |
 | `audio_volume_example` | `/AUDIO/VOLUME_CMD` | Any | Not supported | `ros2 run dr02_std audio_volume_example <0-100>` | Publishes the target volume percentage. |

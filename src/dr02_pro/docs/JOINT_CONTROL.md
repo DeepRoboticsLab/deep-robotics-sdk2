@@ -51,7 +51,7 @@ In the message header, `header.stamp` is the message generation time and `header
 
 ## 5. Control Ranges and Zero Position
 
-- Whole-Body Joint Control Mode: controllable indices are `0-30`.
-- Upper-Body Joint Control Mode: controllable indices are `0-16`, covering the waist and both arms.
+- Whole-Body Development Mode: controllable indices are `0-30`.
+- Upper-Body Development Mode: controllable indices are `0-16`, covering the waist and both arms.
 - Neck joints `29-30` are currently locked and cannot be controlled.
 - The `0` position in the examples is the product-defined and calibrated joint zero, not the position at program startup. The examples first read the current position and then interpolate smoothly to `0`.
