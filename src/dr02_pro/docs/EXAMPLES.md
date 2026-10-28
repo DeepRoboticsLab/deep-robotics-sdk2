@@ -26,10 +26,6 @@ Before controlling the real robot, complete [Real-Robot Deployment and Control](
 | `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | Upper-Body Development Mode | Supported | `ros2 run dr02_pro arm_joint_example --confirm` | Prints `/JOINTS_DATA` receive latency and moves the waist and both arms from their current positions to zero. |
 | `arm_action_example` | `/JOINTS_CMD` | Upper-Body Development Mode | Supported | `ros2 run dr02_pro arm_action_example <action_id> --confirm` | Publishes `/JOINTS_CMD` directly to control the waist and upper-body joints; modify the joint trajectories in the example to define custom actions. |
 
-### 1.1 Joint Interfaces
-
-For joint message fields, units, array order, controllable ranges, and zero-position definition, see [Joint Control Interface](JOINT_CONTROL.md).
-
 Preset upper-body action IDs:
 
 | ID | Name |
@@ -40,6 +36,10 @@ Preset upper-body action IDs:
 | `3` | `salute` |
 | `4` | `salute2` |
 
+### 1.1 Joint Interfaces
+
+For joint message fields, units, array order, controllable ranges, and zero-position definition, see [Joint Control Interface](JOINT_CONTROL.md).
+
 ## 2. High-Level Examples
 
 | Example | Topic / Interface | Real-Robot Development Mode | Simulation Support | Command | Description |
@@ -47,8 +47,8 @@ Preset upper-body action IDs:
 | `motion_info_example` | `/MOTION_INFO` | High-Level Development Mode | Not supported | `ros2 run dr02_pro motion_info_example [--once]` | Shows the motion state selected through `/MOTION_STATE` and the current gait. |
 | `motion_state_example` | `/MOTION_STATE` | High-Level Development Mode | Not supported | `ros2 run dr02_pro motion_state_example <motion_state_value>` | Publishes a motion-state transition command. The initial state is `Idle`, and the normal transition sequence is `Idle -> SuspendedStand -> RLControl`; switch to `JointDamping` in a dangerous condition. |
 | `gait_example` | `/GAIT` | High-Level Development Mode | Not supported | `ros2 run dr02_pro gait_example <gait_value>` | Use only after the robot enters `RLControl`; publishes a gait transition command. |
-| `action_example` | `/ACTION` | High-Level Development Mode | Not supported | `ros2 run dr02_pro action_example <action_id> --confirm` | Executes a robot built-in action. Use only after the robot enters `RLControl`; the robot automatically enters the `Action` motion state and remains there after the action finishes. Switch back to `RLControl` separately. |
-| `action_info_example` | `/ACTION_INFO` | High-Level Development Mode | Not supported | `ros2 run dr02_pro action_info_example` | Shows the built-in action currently being executed; `0` means no action is being executed, and a nonzero value is the current action ID. |
+| `action_example` | `/ACTION_COMMAND` | High-Level Development Mode | Not supported | `ros2 run dr02_pro action_example <action_id> --confirm` | Executes a robot built-in action. Use only after the robot enters `RLControl`. |
+| `action_status_example` | `/ACTION_STATUS` | High-Level Development Mode | Not supported | `ros2 run dr02_pro action_status_example` | Shows the ID, execution stage, and error code of the current action. |
 | `steer_example` | `/STEER` | High-Level Development Mode / Upper-Body Development Mode | Not supported | `ros2 run dr02_pro steer_example` | Use only when the robot is in the `RLControl` state or Upper-Body Development Mode. Keyboard velocity control uses a fixed conservative normalized value of `0.6`; `W/S` moves forward/backward, `A/D` moves left/right, and `Q/E` turns. Releasing a key stops the command; Ctrl+C exits. |
 | `steer_example` | `/REAL_STEER` | High-Level Development Mode / Upper-Body Development Mode | Not supported | `ros2 run dr02_pro steer_example --real` | Use only when the robot is in the `RLControl` state or Upper-Body Development Mode. Publishes a rotation command with `yaw=0.4` for 3 seconds by default; modify `x`, `y`, and `yaw` in the example source as needed. |
 
@@ -79,18 +79,33 @@ Preset upper-body action IDs:
 
 | ID | Name | Description |
 | --- | --- | --- |
-| `0x3000` | `greeting` | Celebration action. |
-| `0x3001` | `kiss` | Kiss action. |
-| `0x3002` | `handshake` | Handshake action. |
-| `0x3003` | `salute` | Salute action. |
-| `0x3004` | `salute2` | Alternate salute action. |
-| `0x3005` | `wave_big` | Large wave action. |
-| `0x3006` | `wave_small` | Small wave action. |
-| `0x3007` | `guide` | Guide gesture. |
-| `0x3008` | `prepare_idle` | Return to the ready posture. |
-| `0x3009` | `heart` | Heart gesture. |
-| `0x300a` | `ultraman` | Ultraman action. |
-| `0x300b` | `clap` | Clap action. |
+| `30` | `arm_wave_small` | Small wave. |
+| `31` | `arm_heart` | Heart gesture. |
+| `32` | `arm_clap` | Clap. |
+| `33` | `arm_salute` | Salute. |
+| `34` | `waist_patrol` | Waist patrol. |
+| `35` | `neck_patrol` | Look left and right. |
+| `36` | `neck_shake` | Shake the head. |
+| `37` | `neck_nod` | Nod the head. |
+
+### 2.4 `action_status_example` Output
+
+| Execution Stage | Meaning |
+| --- | --- |
+| `IDLE(0)` | Idle. |
+| `PLAYING(1)` | Running. |
+| `ERROR(2)` | Failed. |
+| `DONE(3)` | Completed; this does not mean the robot has returned to the default gait. |
+
+| Error Code | Meaning |
+| --- | --- |
+| `OK(0)` | No error. |
+| `BUSY(1)` | Another action is running. |
+| `INVALID_COMMAND(2)` | Invalid or unsupported command. |
+| `OUTPUT_FAILURE(3)` | Execution, communication, or feedback failure, or execution timeout. |
+| `UNSUPPORTED_MODE(4)` | The current motion state or gait is unsupported. |
+| `IMU_NOT_READY(5)` | IMU data is unavailable or has timed out. |
+| `FEEDBACK_NOT_READY(6)` | Required action feedback is unavailable or has timed out. |
 
 ## 3. Monitoring Examples
 

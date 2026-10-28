@@ -18,7 +18,7 @@
 #include <string>
 #include <thread>
 
-#include "drdds/msg/std_msg_int32.hpp"
+#include "drdds/msg/motion_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace {
@@ -28,19 +28,15 @@ struct ActionInfo {
     const char* name;
 };
 
-constexpr std::array<ActionInfo, 12> kActionInfos{{
-    {0x3000, "greeting"},       // Greeting/celebration.
-    {0x3001, "kiss"},           // Kiss.
-    {0x3002, "handshake"},      // Handshake.
-    {0x3003, "salute"},         // Salute.
-    {0x3004, "salute2"},        // Alternate salute.
-    {0x3005, "wave_big"},       // Large wave.
-    {0x3006, "wave_small"},     // Small wave.
-    {0x3007, "guide"},          // Guide gesture.
-    {0x3008, "prepare_idle"},   // Prepare idle posture.
-    {0x3009, "heart"},          // Heart gesture.
-    {0x300a, "ultraman"},       // Ultraman gesture.
-    {0x300b, "clap"},           // Clap.
+constexpr std::array<ActionInfo, 8> kActionInfos{{
+    {30, "arm_wave_small"},       // Small wave.
+    {31, "arm_heart"},            // Heart gesture.
+    {32, "arm_clap"},             // Clap.
+    {33, "arm_salute"},           // Salute.
+    {34, "waist_patrol"},         // Waist patrol.
+    {35, "neck_patrol"},          // Look left and right.
+    {36, "neck_shake"},           // Shake the head.
+    {37, "neck_nod"},             // Nod the head.
 }};
 
 /**
@@ -51,7 +47,7 @@ void PrintUsage(const char* program) {
     std::cout << "Available action IDs:\n"
               << "  id       name\n";
     for (const auto& action : kActionInfos) {
-        std::cout << "  0x" << std::hex << action.id << std::dec << "  " << action.name << "\n";
+        std::cout << "  " << action.id << "  " << action.name << "\n";
     }
     std::cout << "\nUsage:\n"
               << "  " << program << " <action_id> --confirm\n";
@@ -92,7 +88,7 @@ const ActionInfo* FindAction(int32_t action_id) {
 }
 
 /**
- * @brief Wait briefly for the robot-side /ACTION subscriber.
+ * @brief Wait briefly for the robot-side /ACTION_COMMAND subscriber.
  * @param node ROS node that owns the publisher.
  * @param publisher Publisher to check for subscriptions.
  * @return true if a subscriber is discovered; false on timeout or shutdown.
@@ -132,24 +128,26 @@ int main(int argc, char* argv[]) {
     const auto* action = FindAction(action_id);
     rclcpp::init(argc, argv);
     auto node = std::make_shared<rclcpp::Node>("action_example");
-    auto publisher = node->create_publisher<drdds::msg::StdMsgInt32>("/ACTION", 10);
+    auto publisher = node->create_publisher<drdds::msg::MotionState>("/ACTION_COMMAND", 10);
 
     if (!WaitForSubscriber(node, publisher)) {
-        RCLCPP_ERROR(node->get_logger(), "No subscriber found on /ACTION within 2 seconds");
+        RCLCPP_ERROR(node->get_logger(), "No subscriber found on /ACTION_COMMAND within 2 seconds");
         rclcpp::shutdown();
         return 1;
     }
 
-    drdds::msg::StdMsgInt32 msg;
-    msg.value = action_id;
+    drdds::msg::MotionState msg;
+    msg.header.frame_id = 0;
+    msg.header.stamp = node->now();
+    msg.data.state = action_id;
     publisher->publish(msg);
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     RCLCPP_INFO(node->get_logger(),
-                "Published /ACTION action=0x%x (%s). If accepted, the robot will enter Action automatically.",
+                "Published /ACTION_COMMAND action=%u (%s).",
                 static_cast<uint32_t>(action_id), action->name);
     RCLCPP_INFO(node->get_logger(),
-                "After the action finishes, run: ros2 run dr02_pro motion_state_example 0x11");
+                "View execution results with: ros2 run dr02_pro action_status_example");
     rclcpp::shutdown();
     return 0;
 }

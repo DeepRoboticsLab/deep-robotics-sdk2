@@ -47,8 +47,8 @@ ros2 run dr02_pro <example_name> [args]
 | `motion_info_example` | `/MOTION_INFO` | 高层开发模式 | 不支持 | `ros2 run dr02_pro motion_info_example [--once]` | 查看 `/MOTION_STATE` 切换后的运动状态及当前步态。 |
 | `motion_state_example` | `/MOTION_STATE` | 高层开发模式 | 不支持 | `ros2 run dr02_pro motion_state_example <motion_state_value>` | 发布运动状态切换命令。初始状态为 `Idle`，正常切换顺序为 `Idle -> SuspendedStand -> RLControl`；危险情况下可切换至 `JointDamping`。 |
 | `gait_example` | `/GAIT` | 高层开发模式 | 不支持 | `ros2 run dr02_pro gait_example <gait_value>` | 仅在机器人进入 `RLControl` 状态后使用，用于发布步态切换命令。 |
-| `action_example` | `/ACTION` | 高层开发模式 | 不支持 | `ros2 run dr02_pro action_example <action_id> --confirm` | 执行机器人内置动作。仅在机器人进入 `RLControl` 状态后使用，机器人会自动进入 `Action` 运动状态；动作完成后仍处于该运动状态，需另行切回 `RLControl`。 |
-| `action_info_example` | `/ACTION_INFO` | 高层开发模式 | 不支持 | `ros2 run dr02_pro action_info_example` | 查看当前正在执行的内置动作；`0` 表示当前没有执行，非零值表示当前动作 ID。 |
+| `action_example` | `/ACTION_COMMAND` | 高层开发模式 | 不支持 | `ros2 run dr02_pro action_example <action_id> --confirm` | 执行机器人内置动作。仅在机器人进入 `RLControl` 状态后使用。 |
+| `action_status_example` | `/ACTION_STATUS` | 高层开发模式 | 不支持 | `ros2 run dr02_pro action_status_example` | 查看当前正在执行的动作 ID、执行阶段和错误码。 |
 | `steer_example` | `/STEER` | 高层开发模式 / 上肢开发模式 | 不支持 | `ros2 run dr02_pro steer_example` | 仅在机器人进入 `RLControl` 状态或者上肢开发模式使用。键盘速度控制使用固定的保守归一化速度 `0.6`；`W/S` 前后，`A/D` 左右，`Q/E` 转向；松开按键自动停，Ctrl+C 退出。 |
 | `steer_example` | `/REAL_STEER` | 高层开发模式 / 上肢开发模式 | 不支持 | `ros2 run dr02_pro steer_example --real` | 仅在机器人进入 `RLControl` 状态或者上肢开发模式使用。默认发布 3 秒 `yaw=0.4` 的旋转指令；可根据需要在示例代码中修改 `x`、`y` 和 `yaw`。 |
 
@@ -79,18 +79,33 @@ ros2 run dr02_pro <example_name> [args]
 
 | ID | 名称 | 说明 |
 | --- | --- | --- |
-| `0x3000` | `greeting` | 庆祝动作。 |
-| `0x3001` | `kiss` | 飞吻动作。 |
-| `0x3002` | `handshake` | 握手动作。 |
-| `0x3003` | `salute` | 敬礼动作。 |
-| `0x3004` | `salute2` | 第二种敬礼动作。 |
-| `0x3005` | `wave_big` | 大幅招手动作。 |
-| `0x3006` | `wave_small` | 小幅招手动作。 |
-| `0x3007` | `guide` | 引导手势。 |
-| `0x3008` | `prepare_idle` | 返回准备姿态。 |
-| `0x3009` | `heart` | 比心动作。 |
-| `0x300a` | `ultraman` | 奥特曼动作。 |
-| `0x300b` | `clap` | 鼓掌动作。 |
+| `30` | `arm_wave_small` | 小幅招手。 |
+| `31` | `arm_heart` | 比心。 |
+| `32` | `arm_clap` | 鼓掌。 |
+| `33` | `arm_salute` | 敬礼。 |
+| `34` | `waist_patrol` | 腰部转动巡视。 |
+| `35` | `neck_patrol` | 头部左右环视。 |
+| `36` | `neck_shake` | 摇头。 |
+| `37` | `neck_nod` | 点头。 |
+
+### 2.4 `action_status_example` 输出
+
+| 执行阶段 | 含义 |
+| --- | --- |
+| `IDLE(0)` | 空闲。 |
+| `PLAYING(1)` | 执行中。 |
+| `ERROR(2)` | 执行失败。 |
+| `DONE(3)` | 执行完成，不代表已回到默认步态。 |
+
+| 错误码 | 含义 |
+| --- | --- |
+| `OK(0)` | 正常。 |
+| `BUSY(1)` | 已有动作正在执行。 |
+| `INVALID_COMMAND(2)` | 非法或不支持的命令。 |
+| `OUTPUT_FAILURE(3)` | 执行、通信或反馈异常，或执行超时。 |
+| `UNSUPPORTED_MODE(4)` | 当前运动状态或步态不支持。 |
+| `IMU_NOT_READY(5)` | IMU 数据未就绪或超时。 |
+| `FEEDBACK_NOT_READY(6)` | 动作所需反馈未就绪或超时。 |
 
 ## 3. 状态监测示例
 

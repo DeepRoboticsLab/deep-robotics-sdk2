@@ -47,8 +47,8 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 | `motion_info_example` | `/MOTION_INFO` | High-Level Development Mode | Not supported | `ros2 run dr02_std motion_info_example [--once]` | Shows the motion state selected through `/MOTION_STATE` and the current gait. |
 | `motion_state_example` | `/MOTION_STATE` | High-Level Development Mode | Not supported | `ros2 run dr02_std motion_state_example <motion_state_value>` | Publishes a motion-state transition command. The initial state is `Idle`, and the normal transition sequence is `Idle -> SuspendedStand -> RLControl`; switch to `JointDamping` in a dangerous condition. |
 | `gait_example` | `/GAIT` | High-Level Development Mode | Not supported | `ros2 run dr02_std gait_example <gait_value>` | Use only after the robot enters `RLControl`; publishes a gait transition command. |
-| `action_example` | `/ACTION` | High-Level Development Mode | Not supported | `ros2 run dr02_std action_example <action_id> --confirm` | Executes a robot built-in action. Use only after the robot enters `RLControl`; the robot automatically enters the `Action` motion state and remains there after the action finishes. Switch back to `RLControl` separately. |
-| `action_info_example` | `/ACTION_INFO` | High-Level Development Mode | Not supported | `ros2 run dr02_std action_info_example` | Shows the built-in action currently being executed; `0` means no action is being executed, and a nonzero value is the current action ID. |
+| `action_example` | `/ACTION_COMMAND` | High-Level Development Mode | Not supported | `ros2 run dr02_std action_example <action_id> --confirm` | Executes a robot built-in action. Use only after the robot enters `RLControl`. |
+| `action_status_example` | `/ACTION_STATUS` | High-Level Development Mode | Not supported | `ros2 run dr02_std action_status_example` | Shows the ID, execution stage, and error code of the current action. |
 | `steer_example` | `/STEER` | High-Level Development Mode / Upper-Body Development Mode | Not supported | `ros2 run dr02_std steer_example` | Use only when the robot is in the `RLControl` state or Upper-Body Development Mode. Keyboard velocity control uses a fixed conservative normalized value of `0.6`; `W/S` moves forward/backward, `A/D` moves left/right, and `Q/E` turns. Releasing a key stops the command; Ctrl+C exits. |
 | `steer_example` | `/REAL_STEER` | High-Level Development Mode / Upper-Body Development Mode | Not supported | `ros2 run dr02_std steer_example --real` | Use only when the robot is in the `RLControl` state or Upper-Body Development Mode. Publishes a rotation command with `yaw=0.4` for 3 seconds by default; modify `x`, `y`, and `yaw` in the example source as needed. |
 
@@ -79,12 +79,29 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 
 | ID | Name | Description |
 | --- | --- | --- |
-| `0x3000` | `greeting` | Celebration action. |
-| `0x3001` | `kiss` | Kiss action. |
-| `0x3002` | `handshake` | Handshake action. |
-| `0x3003` | `salute` | Salute action. |
-| `0x3004` | `salute2` | Alternate salute action. |
-| `0x3008` | `prepare_idle` | Return to the ready posture. |
+| `30` | `arm_wave_small` | Small wave. |
+| `31` | `arm_heart` | Heart gesture. |
+| `32` | `arm_clap` | Clap. |
+| `33` | `arm_salute` | Salute. |
+
+### 2.4 `action_status_example` Output
+
+| Execution Stage | Meaning |
+| --- | --- |
+| `IDLE(0)` | Idle. |
+| `PLAYING(1)` | Running. |
+| `ERROR(2)` | Failed. |
+| `DONE(3)` | Completed; this does not mean the robot has returned to the default gait. |
+
+| Error Code | Meaning |
+| --- | --- |
+| `OK(0)` | No error. |
+| `BUSY(1)` | Another action is running. |
+| `INVALID_COMMAND(2)` | Invalid or unsupported command. |
+| `OUTPUT_FAILURE(3)` | Execution, communication, or feedback failure, or execution timeout. |
+| `UNSUPPORTED_MODE(4)` | The current motion state or gait is unsupported. |
+| `IMU_NOT_READY(5)` | IMU data is unavailable or has timed out. |
+| `FEEDBACK_NOT_READY(6)` | Required action feedback is unavailable or has timed out. |
 
 ## 3. Monitoring Examples
 

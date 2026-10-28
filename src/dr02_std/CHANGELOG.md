@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Updated `action_example` to use `/ACTION_COMMAND` with action IDs 30-33.
+- Renamed `action_info_example` to `action_status_example` to report action IDs, execution stages, and error codes from `/ACTION_STATUS`.
 - Updated `developer_mode_example` and Developer Mode documentation with complete entry and exit workflows.
 - Changed the IMU and `/JOINTS_DATA` subscriptions to Best Effort reliability and Keep Last history with a queue depth of 1.
 - Robot software 1.0.1 or later publishes these Topics using Best Effort reliability. Older SDK versions using Reliable subscriptions cannot receive them; use DR02 Std SDK 1.3.0 or later.
