@@ -21,7 +21,7 @@ ros2 run dr02_std <example_name> [args]
 
 | 示例 | Topic / 接口 | 实机开发模式 | 仿真支持 | 运行命令 | 说明 |
 | --- | --- | --- | --- | --- | --- |
-| `joints_example` | `/JOINTS_DATA` | 全身开发模式 | 支持 | `ros2 run dr02_std joints_example` | 打印一帧完整 DR02 Std 关节状态后退出。 |
+| `joints_example` | `/JOINTS_DATA` | 全身开发模式 / 上肢开发模式 | 支持 | `ros2 run dr02_std joints_example` | 打印一帧完整 DR02 Std 关节状态后退出。 |
 | `joints_example` | `/JOINTS_CMD` | 全身开发模式 | 支持 | `ros2 run dr02_std joints_example --confirm` | 平滑控制 21 个关节回零并保持。 |
 | `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | 上肢开发模式 | 支持 | `ros2 run dr02_std arm_joint_example --confirm` | 打印 `/JOINTS_DATA` 接收延迟，并将腰部和双臂从当前位置移动到 0 位。 |
 | `arm_action_example` | `/JOINTS_CMD` | 上肢开发模式 | 支持 | `ros2 run dr02_std arm_action_example <action_id> --confirm` | 直接发布 `/JOINTS_CMD` 控制腰部和上肢关节；可修改示例中的关节轨迹，自定义动作。 |
@@ -58,6 +58,7 @@ ros2 run dr02_std <example_name> [args]
 > - `action_example`、`gait_example` 和 `steer_example` 都会产生运动或动作控制，运行前应确认运动空间安全。
 > - `/STEER` 的 `x`、`y` 和 `yaw` 是 `[-1.0, 1.0]` 的归一化比例，不是实际速度；示例固定使用 `0.6`，实际速度由机器人状态、步态和控制策略决定。
 > - 请持续按住按键；松开后约 `320 ms` 归零。机器人可能调整姿态或产生倾斜，实机测试时应在空旷环境中一次只测试一个方向键。本示例仅用于 Topic 验证，不用于性能或最大速度测试。
+> - 命令发布成功不代表执行完成。使用 `motion_info_example` 确认运动状态，使用 `action_status_example` 查看内置动作执行结果。
 
 ### 2.1 `motion_state_example` 参数
 

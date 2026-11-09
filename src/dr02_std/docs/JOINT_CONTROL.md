@@ -12,6 +12,8 @@ In the message header, `header.stamp` is the message generation time and `header
 
 ## 2. Feedback Message: `/JOINTS_DATA`
 
+On the real robot, `/JOINTS_DATA` is published only in Whole-Body Development Mode or Upper-Body Development Mode. No data is published on this Topic when Developer Mode is enabled but High-Level Development Mode remains selected.
+
 | Field | Meaning | Unit or description |
 | --- | --- | --- |
 | `name` | Joint name | Reserved field; SDK applications should not rely on it |

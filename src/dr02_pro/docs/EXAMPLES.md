@@ -21,7 +21,7 @@ Before controlling the real robot, complete [Real-Robot Deployment and Control](
 
 | Example | Topic / Interface | Real-Robot Development Mode | Simulation Support | Command | Description |
 | --- | --- | --- | --- | --- | --- |
-| `joints_example` | `/JOINTS_DATA` | Whole-Body Development Mode | Supported | `ros2 run dr02_pro joints_example` | Prints one complete DR02 Pro joint-state frame and exits. |
+| `joints_example` | `/JOINTS_DATA` | Whole-Body Development Mode / Upper-Body Development Mode | Supported | `ros2 run dr02_pro joints_example` | Prints one complete DR02 Pro joint-state frame and exits. |
 | `joints_example` | `/JOINTS_CMD` | Whole-Body Development Mode | Supported | `ros2 run dr02_pro joints_example --confirm` | Moves all 31 joints smoothly to the zero position and holds the command. |
 | `arm_joint_example` | `/JOINTS_DATA`, `/JOINTS_CMD` | Upper-Body Development Mode | Supported | `ros2 run dr02_pro arm_joint_example --confirm` | Prints `/JOINTS_DATA` receive latency and moves the waist and both arms from their current positions to zero. |
 | `arm_action_example` | `/JOINTS_CMD` | Upper-Body Development Mode | Supported | `ros2 run dr02_pro arm_action_example <action_id> --confirm` | Publishes `/JOINTS_CMD` directly to control the waist and upper-body joints; modify the joint trajectories in the example to define custom actions. |
@@ -58,6 +58,7 @@ For joint message fields, units, array order, controllable ranges, and zero-posi
 > - `action_example`, `gait_example`, and `steer_example` generate robot motion or action commands. Confirm that the motion area is safe before running them.
 > - `/STEER` values `x`, `y`, and `yaw` are normalized ratios in `[-1.0, 1.0]`, not physical velocities. The example uses a fixed value of `0.6`; actual speed depends on the robot state, gait, and control policy.
 > - Hold a key to generate a continuous command; the command returns to zero approximately `320 ms` after release. The robot may adjust its posture or lean. Test only one direction at a time in a clear area. This example is intended for Topic verification, not performance or maximum-speed testing.
+> - Successfully publishing a command does not mean execution is complete. Use `motion_info_example` to confirm the motion state and `action_status_example` to check built-in action execution results.
 
 ### 2.1 `motion_state_example` Parameters
 
